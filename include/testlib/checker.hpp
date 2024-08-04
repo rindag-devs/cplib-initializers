@@ -98,7 +98,7 @@ struct Reporter : cplib::checker::Reporter {
   }
 
   [[noreturn]] auto report(const cplib::checker::Report &report) -> void override {
-    stream << std::fixed << std::setprecision(10);
+    stream << std::fixed << std::setprecision(9);
 
     if (appes_mode) {
       stream << R"(<?xml version="1.0" encoding="utf-8"?><result outcome = ")";

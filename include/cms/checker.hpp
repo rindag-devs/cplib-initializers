@@ -32,7 +32,7 @@ struct CmsReporter : cplib::checker::Reporter {
     std::ostream score_stream(std::cout.rdbuf());
     std::ostream status_stream(std::clog.rdbuf());
 
-    score_stream << std::fixed << std::setprecision(10) << report.score << '\n';
+    score_stream << std::fixed << std::setprecision(9) << report.score << '\n';
 
     switch (report.status) {
       case cplib::checker::Report::Status::INTERNAL_ERROR:

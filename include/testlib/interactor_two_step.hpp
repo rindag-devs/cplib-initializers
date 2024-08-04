@@ -102,7 +102,7 @@ struct Reporter : cplib::interactor::Reporter {
 
   [[noreturn]] auto report(const cplib::interactor::Report &report) -> void override {
     auto bytes = std::vector<std::uint8_t>(report.message.begin(), report.message.end());
-    stream << std::fixed << std::setprecision(10);
+    stream << std::fixed << std::setprecision(9);
     stream << static_cast<int>(report.status) << '\n'
            << report.score << '\n'
            << detail::base64_encode(bytes) << '\n';
