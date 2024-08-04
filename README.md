@@ -4,7 +4,7 @@ This repository includes initializers officially maintained by CPLib.
 
 ## How to use
 
-First include [cplib.hpp](https://github.com/rindag-devs/cplib) in the code, then select an initializer for your target platform, and use the corresponding `REGISTER_CPLIB_<MODE>_OPT` Macro registration state with the initializer.
+First include [cplib.hpp](https://github.com/rindag-devs/cplib) in the code, then select an initializer for your target platform, and use the corresponding `CPLIB_REGISTER_<MODE>_OPT` Macro registration state with the initializer.
 
 Here's a usage example:
 
