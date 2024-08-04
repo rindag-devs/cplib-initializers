@@ -148,7 +148,7 @@ struct Initializer : cplib::interactor::Initializer {
     set_from_user_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
     set_to_user_fileno(fileno(stdout));
 
-    std::string report_file = parsed_args.ordered[1];
+    const auto &report_file = parsed_args.ordered[1];
 
     state.reporter = std::make_unique<Reporter>(report_file);
   }

@@ -90,6 +90,9 @@ struct Initializer : cplib::validator::Initializer {
   auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
     auto &state = this->state();
 
+    // Use PlainTextReporter to handle errors during the init process
+    state.reporter = std::make_unique<cplib::validator::PlainTextReporter>();
+
     auto parsed_args = cplib::cmd_args::ParsedArgs(args);
 
     if (parsed_args.has_flag("help")) {
