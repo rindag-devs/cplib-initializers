@@ -2,6 +2,7 @@
 
 | Platform                                                                    | Checker                    | Interactor                                          | Validator                    | Note                                                                                |
 | --------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
+| Arbiter (on NOI Linux 2.0)                                                  | [arbiter][arbiter-checker] | N/A                                                 | N/A                          |                                                                                     |
 | [CMS](https://cms-dev.github.io/)                                           | [cms][cms-checker]         | N/A                                                 | N/A                          |                                                                                     |
 | [Codeforces Polygon](https://polygon.codeforces.com)                        | [testlib][testlib-checker] | [testlib-two-step][testlib-interactor-two-step][^1] | [testlib][testlib-validator] | percent_mode=true, enable "Treat points from checker as a percent" in test settings |
 | [DOMJudge](https://www.domjudge.org/)                                       | [kattis][kattis-checker]   | [kattis][kattis-interactor]                         | N/A                          |                                                                                     |
@@ -10,12 +11,14 @@
 | [Lemon (LemonLime)](https://github.com/Project-LemonLime/Project_LemonLime) | [lemon][lemon-checker]     | N/A                                                 | N/A                          |                                                                                     |
 | [Lyrio (LibreOJ)](https://github.com/lyrio-dev/lyrio)                       | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | N/A                          | percent_mode=true                                                                   |
 | [SYZOJ 2](https://github.com/syzoj/syzoj)[^3]                               | [syzoj][syzoj-checker]     | [syzoj][syzoj-interactor]                           | N/A                          |                                                                                     |
-| [Universal OJ](https://uoj.ac)                                              | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false                                                                  |
+| [Universal OJ](https://uoj.ac)[^4]                                          | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false                                                                  |
 
 [^1]: You need to use [testlib-interactor-two-step] and [testlib-checker-two-step] together. Read [Testlib Two-Step Interaction Help](include/testlib/two_step_interaction_help.md) for details.
 [^2]: Hydro accepts both 1 and 100 points as full score: When the score is <= 1, 1 is considered full score, otherwise 100 is considered full score. However, to prevent parsing errors caused by scoring less than 1 out of 100, it is recommended to set full score to 1.
 [^3]: SYZOJ 2 and Lyrio are two different platforms, and LibreOJ is no longer developed based on SYZOJ 2.
+[^4]: UOJ Community Edition needs to edit the source code or upgrade the compiler to get C++ 17 or higher support.
 
+[arbiter-checker]: include/arbiter/checker.hpp
 [cms-checker]: include/cms/checker.hpp
 [hustoj-checker]: include/hustoj/checker.hpp
 [kattis-checker]: include/kattis/checker.hpp
