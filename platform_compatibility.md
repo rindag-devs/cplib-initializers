@@ -5,6 +5,7 @@
 | [CMS](https://cms-dev.github.io/)                                           | [cms][cms-checker]         | N/A                                                 | N/A                          |                                                                                     |
 | [Codeforces Polygon](https://polygon.codeforces.com)                        | [testlib][testlib-checker] | [testlib-two-step][testlib-interactor-two-step][^1] | [testlib][testlib-validator] | percent_mode=true, enable "Treat points from checker as a percent" in test settings |
 | [DOMJudge](https://www.domjudge.org/)                                       | [kattis][kattis-checker]   | [kattis][kattis-interactor]                         | N/A                          |                                                                                     |
+| [HustOJ](http://www.hustoj.org/)                                            | [hustoj][hustoj-checker]   | N/A                                                 | N/A                          |                                                                                     |
 | [Hydro](https://hydro.ac)                                                   | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false[^2]                                                              |
 | [Lemon (LemonLime)](https://github.com/Project-LemonLime/Project_LemonLime) | [lemon][lemon-checker]     | N/A                                                 | N/A                          |                                                                                     |
 | [Lyrio (LibreOJ)](https://github.com/lyrio-dev/lyrio)                       | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | N/A                          | percent_mode=true                                                                   |
@@ -16,6 +17,7 @@
 [^3]: SYZOJ 2 and Lyrio are two different platforms, and LibreOJ is no longer developed based on SYZOJ 2.
 
 [cms-checker]: include/cms/checker.hpp
+[hustoj-checker]: include/hustoj/checker.hpp
 [kattis-checker]: include/kattis/checker.hpp
 [kattis-interactor]: include/kattis/interactor.hpp
 [lemon-checker]: include/lemon/checker.hpp
