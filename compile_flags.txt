@@ -1,0 +1,3 @@
+-Ithird_party/cplib/include
+-Iinclude
+-std=c++17
