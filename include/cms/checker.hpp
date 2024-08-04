@@ -27,7 +27,7 @@
 
 namespace cplib_initializers::cms::checker {
 
-struct CmsReporter : cplib::checker::Reporter {
+struct Reporter : cplib::checker::Reporter {
   [[noreturn]] auto report(const cplib::checker::Report& report) -> void override {
     std::ostream score_stream(std::cout.rdbuf());
     std::ostream status_stream(std::clog.rdbuf());
@@ -72,11 +72,11 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }
 }  // namespace detail
 
-struct CmsInitializer : cplib::checker::Initializer {
+struct Initializer : cplib::checker::Initializer {
   auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
     auto& state = this->state();
 
-    state.reporter = std::make_unique<CmsReporter>();
+    state.reporter = std::make_unique<Reporter>();
 
     auto parsed_args = cplib::cmd_args::ParsedArgs(args);
 
