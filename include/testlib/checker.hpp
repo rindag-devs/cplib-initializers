@@ -172,6 +172,7 @@ struct Reporter : cplib::checker::Reporter {
 namespace detail {
 constexpr std::string_view ARGS_USAGE =
     "<input_file> <output_file> <answer_file> [<report_file> [-appes [...]]]";
+
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = cplib::format(CPLIB_STARTUP_TEXT
                                   "\n"

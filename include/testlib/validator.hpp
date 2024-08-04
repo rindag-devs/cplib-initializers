@@ -25,7 +25,6 @@
 #include <vector>
 
 #include "cplib.hpp"
-#include "var.hpp"
 
 namespace cplib_initializers::testlib::validator {
 
@@ -72,6 +71,7 @@ struct Reporter : cplib::validator::Reporter {
 
 namespace detail {
 constexpr std::string_view ARGS_USAGE = "[--testOverviewLogFileName <overview_log_path>] [...]";
+
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = cplib::format(CPLIB_STARTUP_TEXT
                                   "\n"

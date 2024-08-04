@@ -1,17 +1,19 @@
 # Platform Compatibility
 
-| Platform                                             | Checker                    | Interactor                                          | Validator                    | Note                                                                                |
-| ---------------------------------------------------- | -------------------------- | --------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
-| [CMS](https://cms-dev.github.io/)                    | [cms][cms-checker]         | N/A                                                 | N/A                          |                                                                                     |
-| [Codeforces Polygon](https://polygon.codeforces.com) | [testlib][testlib-checker] | [testlib-two-step][testlib-interactor-two-step][^1] | [testlib][testlib-validator] | percent_mode=true, enable "Treat points from checker as a percent" in test settings |
-| [Hydro](https://hydro.ac)                            | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false[^2]                                                              |
-| [Lyrio (LibreOJ)](https://loj.ac)                    | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | N/A                          | percent_mode=true                                                                   |
-| [Universal OJ](https://uoj.ac)                       | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false                                                                  |
+| Platform                                                                    | Checker                    | Interactor                                          | Validator                    | Note                                                                                |
+| --------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
+| [CMS](https://cms-dev.github.io/)                                           | [cms][cms-checker]         | N/A                                                 | N/A                          |                                                                                     |
+| [Codeforces Polygon](https://polygon.codeforces.com)                        | [testlib][testlib-checker] | [testlib-two-step][testlib-interactor-two-step][^1] | [testlib][testlib-validator] | percent_mode=true, enable "Treat points from checker as a percent" in test settings |
+| [Hydro](https://hydro.ac)                                                   | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false[^2]                                                              |
+| [Lemon (LemonLime)](https://github.com/Project-LemonLime/Project_LemonLime) | [lemon][lemon-checker]     | N/A                                                 | N/A                          |                                                                                     |
+| [Lyrio (LibreOJ)](https://github.com/lyrio-dev/lyrio)                       | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | N/A                          | percent_mode=true                                                                   |
+| [Universal OJ](https://uoj.ac)                                              | [testlib][testlib-checker] | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false                                                                  |
 
 [^1]: You need to use [testlib-interactor-two-step] and [testlib-checker-two-step] together. Read [Testlib Two-Step Interaction Help](include/testlib/two_step_interaction_help.md) for details.
 [^2]: Hydro accepts both 1 and 100 points as full score: When the score is <= 1, 1 is considered full score, otherwise 100 is considered full score. However, to prevent parsing errors caused by scoring less than 1 out of 100, it is recommended to set full score to 1.
 
 [cms-checker]: include/cms/checker.hpp
+[lemon-checker]: include/lemon/checker.hpp
 [testlib-checker]: include/testlib/checker.hpp
 [testlib-checker-two-step]: include/testlib/checker_two_step.cpp
 [testlib-interactor]: include/testlib/interactor.hpp

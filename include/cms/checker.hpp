@@ -57,6 +57,7 @@ struct CmsReporter : cplib::checker::Reporter {
 
 namespace detail {
 constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file>";
+
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = cplib::format(CPLIB_STARTUP_TEXT
                                   "\n"
