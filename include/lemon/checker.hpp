@@ -39,7 +39,7 @@ struct LemonReporter : cplib::checker::Reporter {
         report_stream(report_path.data(), std::ios_base::binary) {}
 
   [[noreturn]] auto report(const cplib::checker::Report &report) -> void override {
-    score_stream << llround(1. * report.score / max_score) << '\n';
+    score_stream << std::llround(1. * report.score / max_score);
     report_stream << report.status.to_string() << '\n';
     report_stream << report.message << '\n';
     std::exit(0);

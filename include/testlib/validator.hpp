@@ -43,6 +43,8 @@ struct Reporter : cplib::validator::Reporter {
   }
 
   [[noreturn]] auto report(const cplib::validator::Report &report) -> void override {
+    std::ostream message(std::clog.rdbuf());
+
     if (overview_log_stream.has_value()) {
       for (const auto &[name, satisfaction] : trait_status_) {
         *overview_log_stream << "feature \"" << name << "\":";
@@ -56,14 +58,14 @@ struct Reporter : cplib::validator::Reporter {
     switch (report.status) {
       case cplib::validator::Report::Status::INTERNAL_ERROR:
       case cplib::validator::Report::Status::INVALID:
-        std::clog << "FAIL " << report.message << '\n';
+        message << "FAIL " << report.message << '\n';
         std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
         break;
       case cplib::validator::Report::Status::VALID:
         std::exit(static_cast<int>(ExitCode::OK));
         break;
       default:
-        std::clog << "FAIL invalid status" << '\n';
+        message << "FAIL invalid status\n";
         std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
     }
   }

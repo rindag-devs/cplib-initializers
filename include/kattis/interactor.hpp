@@ -22,6 +22,7 @@
 #include <ios>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -51,8 +52,9 @@ struct Reporter : cplib::interactor::Reporter {
 
   explicit Reporter(std::string_view feedback_dir) {
     if (!detail::is_directory(feedback_dir.data())) {
-      std::cerr << feedback_dir << " is not a directory\n";
-      std::exit(static_cast<int>(EXITCODE_JE));
+      std::ostream stream(std::clog.rdbuf());
+      stream << feedback_dir << " is not a directory\n";
+      std::exit(EXITCODE_JE);
     }
     judge_message.open(cplib::format("%s/%s", feedback_dir.data(), FILENAME_JUDGE_MESSAGE.data()),
                        std::ios_base::binary);

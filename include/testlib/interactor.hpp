@@ -75,7 +75,7 @@ struct Reporter : cplib::interactor::Reporter {
 
   auto print_score(double score) -> void {
     if (percent_mode) {
-      stream << llround(score * 100);
+      stream << std::llround(score * 100);
     } else {
       stream << score;
     }
@@ -98,7 +98,7 @@ struct Reporter : cplib::interactor::Reporter {
         stream << "points ";
         break;
       default:
-        std::cerr << "FAIL invalid status\n";
+        stream << "FAIL invalid status\n";
         std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
     }
     if (report.status == cplib::interactor::Report::Status::PARTIALLY_CORRECT) {
@@ -117,7 +117,7 @@ struct Reporter : cplib::interactor::Reporter {
       case cplib::interactor::Report::Status::PARTIALLY_CORRECT:
         std::exit(static_cast<int>(ExitCode::PARTIALLY_CORRECT));
       default:
-        std::cerr << "FAIL invalid status\n";
+        stream << "FAIL invalid status\n";
         std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
     }
   }
