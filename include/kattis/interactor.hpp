@@ -40,9 +40,9 @@ constexpr std::string_view FILENAME_JUDGE_ERROR = "judgeerror.txt";
 constexpr std::string_view FILENAME_SCORE = "score.txt";
 
 namespace detail {
-inline auto is_directory(const char* path) -> bool {
+inline auto is_directory(std::string_view path) -> bool {
   struct stat entry;
-  return stat(path, &entry) == 0 && S_ISDIR(entry.st_mode);
+  return stat(path.data(), &entry) == 0 && S_ISDIR(entry.st_mode);
 }
 }  // namespace detail
 
@@ -50,19 +50,13 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  explicit Reporter(std::string_view feedback_dir) {
-    if (!detail::is_directory(feedback_dir.data())) {
-      std::ostream stream(std::clog.rdbuf());
-      stream << feedback_dir << " is not a directory\n";
-      std::exit(EXITCODE_JE);
-    }
-    judge_message.open(cplib::format("%s/%s", feedback_dir.data(), FILENAME_JUDGE_MESSAGE.data()),
-                       std::ios_base::binary);
-    judge_error.open(cplib::format("%s/%s", feedback_dir.data(), FILENAME_JUDGE_ERROR.data()),
-                     std::ios_base::binary);
-    score.open(cplib::format("%s/%s", feedback_dir.data(), FILENAME_SCORE.data()),
-               std::ios_base::binary);
-  }
+  explicit Reporter(std::string_view feedback_dir)
+      : judge_message(cplib::format("%s/%s", feedback_dir.data(), FILENAME_JUDGE_MESSAGE.data()),
+                      std::ios_base::binary),
+        judge_error(cplib::format("%s/%s", feedback_dir.data(), FILENAME_JUDGE_ERROR.data()),
+                    std::ios_base::binary),
+        score(cplib::format("%s/%s", feedback_dir.data(), FILENAME_SCORE.data()),
+              std::ios_base::binary) {}
 
   [[noreturn]] auto report(const Report& report) -> void override {
     switch (report.status) {
@@ -125,8 +119,13 @@ struct Initializer : cplib::interactor::Initializer {
     }
 
     const auto& inf = parsed_args.ordered[0];
+    const auto& feedback_dir = parsed_args.ordered[2];
 
-    state.reporter = std::make_unique<Reporter>(parsed_args.ordered[2]);
+    if (!detail::is_directory(feedback_dir)) {
+      cplib::panic(feedback_dir + " is not a directory");
+    }
+
+    state.reporter = std::make_unique<Reporter>(feedback_dir);
 
     set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
     set_from_user_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
