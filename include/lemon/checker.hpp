@@ -77,6 +77,11 @@ struct LemonInitializer : cplib::checker::Initializer {
       detail::print_help_message(arg0);
     }
 
+    if (parsed_args.ordered.size() != 6) {
+      cplib::panic("Program must be run with the following arguments:\n  " +
+                   std::string(detail::ARGS_USAGE));
+    }
+
     set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::NONE);
     set_ouf_path(parsed_args.ordered[1], cplib::var::Reader::TraceLevel::NONE);
     set_ans_path(parsed_args.ordered[2], cplib::var::Reader::TraceLevel::NONE);
