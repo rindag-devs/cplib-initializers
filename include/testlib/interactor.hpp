@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_TESTLIB_INTERACTOR_HPP_
+#define CPLIB_INITIALIZERS_TESTLIB_INTERACTOR_HPP_
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -170,3 +173,5 @@ struct Initializer : cplib::interactor::Initializer {
   }
 };
 }  // namespace cplib_initializers::testlib::interactor
+
+#endif

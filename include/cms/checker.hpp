@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_CMS_CHECKER_HPP_
+#define CPLIB_INITIALIZERS_CMS_CHECKER_HPP_
+
 #include <cstdlib>
 #include <iomanip>
 #include <ios>
@@ -99,3 +102,5 @@ struct Initializer : cplib::checker::Initializer {
   }
 };
 }  // namespace cplib_initializers::cms::checker
+
+#endif

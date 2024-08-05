@@ -22,6 +22,9 @@
  * full score are considered WRONG_ANSWER.
  */
 
+#ifndef CPLIB_INITIALIZERS_HUSTOJ_CHECKER_HPP_
+#define CPLIB_INITIALIZERS_HUSTOJ_CHECKER_HPP_
+
 #include <cstdlib>
 #include <memory>
 #include <string>
@@ -98,3 +101,5 @@ struct Initializer : cplib::checker::Initializer {
   }
 };
 }  // namespace cplib_initializers::hustoj::checker
+
+#endif

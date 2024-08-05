@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_TESTLIB_VALIDATOR_HPP_
+#define CPLIB_INITIALIZERS_TESTLIB_VALIDATOR_HPP_
+
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -112,3 +115,5 @@ struct Initializer : cplib::validator::Initializer {
   }
 };
 }  // namespace cplib_initializers::testlib::validator
+
+#endif

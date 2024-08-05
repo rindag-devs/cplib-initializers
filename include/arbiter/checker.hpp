@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_ARBITER_CHECKER_HPP_
+#define CPLIB_INITIALIZERS_ARBITER_CHECKER_HPP_
+
 #include <cctype>
 #include <cmath>
 #include <cstdlib>
@@ -101,3 +104,5 @@ struct Initializer : cplib::checker::Initializer {
   }
 };
 }  // namespace cplib_initializers::arbiter::checker
+
+#endif

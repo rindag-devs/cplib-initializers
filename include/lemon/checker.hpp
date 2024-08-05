@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_LEMON_CHECKER_HPP_
+#define CPLIB_INITIALIZERS_LEMON_CHECKER_HPP_
+
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
@@ -94,3 +97,5 @@ struct LemonInitializer : cplib::checker::Initializer {
   }
 };
 }  // namespace cplib_initializers::lemon::checker
+
+#endif

@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_KATTIS_INTERACTOR_HPP_
+#define CPLIB_INITIALIZERS_KATTIS_INTERACTOR_HPP_
+
 #include <sys/stat.h>
 
 #include <cstdio>
@@ -133,3 +136,5 @@ struct Initializer : cplib::interactor::Initializer {
   }
 };
 }  // namespace cplib_initializers::kattis::interactor
+
+#endif

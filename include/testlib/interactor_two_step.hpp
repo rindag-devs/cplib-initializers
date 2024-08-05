@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_TESTLIB_INTERACTOR_TWO_STEP_HPP_
+#define CPLIB_INITIALIZERS_TESTLIB_INTERACTOR_TWO_STEP_HPP_
+
 #include <algorithm>
 #include <array>
 #include <cstddef>
@@ -155,3 +158,5 @@ struct Initializer : cplib::interactor::Initializer {
   }
 };
 }  // namespace cplib_initializers::testlib::interactor_two_step
+
+#endif

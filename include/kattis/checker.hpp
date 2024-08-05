@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_KATTIS_CHECKER_HPP_
+#define CPLIB_INITIALIZERS_KATTIS_CHECKER_HPP_
+
 #include <sys/stat.h>
 
 #include <cstdio>
@@ -135,3 +138,5 @@ struct Initializer : cplib::checker::Initializer {
 };
 
 }  // namespace cplib_initializers::kattis::checker
+
+#endif

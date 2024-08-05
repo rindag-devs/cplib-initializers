@@ -13,6 +13,9 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef CPLIB_INITIALIZERS_SYZOJ_INTERACTOR_HPP_
+#define CPLIB_INITIALIZERS_SYZOJ_INTERACTOR_HPP_
+
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -95,3 +98,5 @@ struct Initializer : cplib::interactor::Initializer {
 };
 
 }  // namespace cplib_initializers::syzoj::interactor
+
+#endif

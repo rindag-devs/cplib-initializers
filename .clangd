@@ -1,6 +1,16 @@
 CompileFlags:
-  Add: ['-Wall', '-Wextra', '-Wno-xor-used-as-pow', '-DCPLIB_CLANGD=1']
+  Remove: ["-std=gnu++20"]
+  Add: ["-Wall", "-Wextra", "-Wno-xor-used-as-pow", "-DCPLIB_CLANGD=1"]
 
 Diagnostics:
   UnusedIncludes: Strict
   MissingIncludes: Strict
+
+---
+If:
+  PathMatch:
+    - '.*\.h'
+
+CompileFlags:
+  Remove: ["-std=*"]
+  Add: ["-xc", "-std=gnu17"]
