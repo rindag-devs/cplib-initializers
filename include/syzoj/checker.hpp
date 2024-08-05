@@ -57,6 +57,10 @@ struct Reporter : cplib::checker::Reporter {
       }
     }
 
+    if (report.status == Status::INTERNAL_ERROR) {
+      std::exit(1);
+    }
+
     std::exit(0);
   }
 };
