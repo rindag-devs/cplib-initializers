@@ -59,7 +59,7 @@ struct Reporter : cplib::checker::Reporter {
 };
 
 namespace detail {
-constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file>";
+constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = cplib::format(CPLIB_STARTUP_TEXT
@@ -87,7 +87,7 @@ struct Initializer : cplib::checker::Initializer {
       detail::print_help_message(arg0);
     }
 
-    if (parsed_args.ordered.size() != 3) {
+    if (parsed_args.ordered.size() < 3) {
       cplib::panic("Program must be run with the following arguments:\n  " +
                    std::string(detail::ARGS_USAGE));
     }

@@ -13,6 +13,7 @@
 | [Lemon (LemonLime)](https://github.com/Project-LemonLime/Project_LemonLime) | [lemon][lemon-checker]             | N/A                                                 | N/A                          |                                                                                     |
 | [Lyrio (LibreOJ)](https://github.com/lyrio-dev/lyrio)                       | [testlib][testlib-checker]         | [testlib][testlib-interactor]                       | N/A                          | percent_mode=true                                                                   |
 | [Nowcoder](https://www.nowcoder.com/)                                       | [nowcoder][nowcoder-checker]       | N/A                                                 | N/A                          |                                                                                     |
+| [QDUOJ](https://qduoj.com/)                                                 | [qduoj][qduoj-checker]             | N/A                                                 | N/A                          |                                                                                     |
 | [SPOJ](https://www.spoj.com/)                                               | [spoj][spoj-checker]               | [spoj][spoj-interactor]                             | N/A                          |                                                                                     |
 | [SYZOJ 2](https://github.com/syzoj/syzoj)[^3]                               | [syzoj][syzoj-checker]             | [syzoj][syzoj-interactor]                           | N/A                          |                                                                                     |
 | [Universal OJ](https://uoj.ac)[^4]                                          | [testlib][testlib-checker]         | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false                                                                  |
@@ -30,6 +31,7 @@
 [kattis-interactor]: include/kattis/interactor.hpp
 [lemon-checker]: include/lemon/checker.hpp
 [nowcoder-checker]: include/nowcoder/checker.hpp
+[qduoj-checker]: include/qduoj/checker.hpp
 [spoj-checker]: include/spoj/checker.hpp
 [spoj-interactor]: include/spoj/interactor.hpp
 [syzoj-checker]: include/syzoj/checker.hpp
