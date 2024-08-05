@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <ios>
 #include <memory>
 #include <optional>
@@ -32,19 +33,39 @@
 namespace cplib_initializers::lemon::checker {
 
 struct LemonReporter : cplib::checker::Reporter {
+  using Report = cplib::checker::Report;
+  using Status = Report::Status;
+
   std::int32_t max_score;
-  std::ofstream score_stream, report_stream;
+  std::ofstream score, message;
 
   explicit LemonReporter(std::int32_t max_score, std::string_view score_path,
                          std::string_view report_path)
       : max_score(max_score),
-        score_stream(score_path.data(), std::ios_base::binary),
-        report_stream(report_path.data(), std::ios_base::binary) {}
+        score(score_path.data(), std::ios_base::binary),
+        message(report_path.data(), std::ios_base::binary) {}
 
-  [[noreturn]] auto report(const cplib::checker::Report &report) -> void override {
-    score_stream << std::llround(1. * report.score / max_score);
-    report_stream << report.status.to_string() << '\n';
-    report_stream << report.message << '\n';
+  [[noreturn]] auto report(const Report &report) -> void override {
+    score << std::llround(1. * report.score / max_score);
+
+    message << std::fixed << std::setprecision(2) << report.status.to_string() << ", scores "
+            << report.score * 100.0 << " of 100.\n";
+
+    if (report.status != Status::ACCEPTED || !report.message.empty()) {
+      message << report.message << '\n';
+    }
+
+    if (trace_stack_.has_value()) {
+      message << "\nReader trace stack (most recent variable last):\n";
+      for (const auto &line : trace_stack_->to_plain_text_lines()) {
+        message << "  " << line << '\n';
+      }
+    }
+
+    if (report.status == Status::INTERNAL_ERROR) {
+      std::exit(1);
+    }
+
     std::exit(0);
   }
 };
@@ -85,9 +106,9 @@ struct LemonInitializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_path(parsed_args.ordered[1], cplib::var::Reader::TraceLevel::NONE);
-    set_ans_path(parsed_args.ordered[2], cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_ouf_path(parsed_args.ordered[1], cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_ans_path(parsed_args.ordered[2], cplib::var::Reader::TraceLevel::STACK_ONLY);
 
     std::int32_t max_score =
         cplib::var::i32("max_score", 0, std::nullopt).parse(parsed_args.ordered[3]);
