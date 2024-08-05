@@ -54,7 +54,7 @@ struct Reporter : cplib::checker::Reporter {
     std::ofstream stream(REPORT_PATH.data(), std::ios_base::binary);
 
     stream << report.status.to_string() << ": " << detail::escape(report.message) << '\n';
-    stream << std::llround(report.score * 10) << '\n';
+    stream << std::llround(report.score * 10.0) << '\n';
 
     std::exit(0);
   }

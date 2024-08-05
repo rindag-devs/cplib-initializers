@@ -6,6 +6,7 @@
 | [CMS](https://cms-dev.github.io/)                                           | [cms][cms-checker]                 | N/A                                                 | N/A                          |                                                                                     |
 | [CodeChef](https://www.codechef.com/)                                       | [spoj][spoj-checker]               | [spoj][spoj-interactor]                             | N/A                          |                                                                                     |
 | [Codeforces Polygon](https://polygon.codeforces.com)                        | [testlib][testlib-checker]         | [testlib-two-step][testlib-interactor-two-step][^1] | [testlib][testlib-validator] | percent_mode=true, enable "Treat points from checker as a percent" in test settings |
+| [DMOJ](https://dmoj.ca/)                                                    | [coci][coci-checker]               | [coci][coci-interactor]                             | N/A                          | use "bridged" checker or interactor (aka "grader") with type "coci"                 |
 | [DOMJudge](https://www.domjudge.org/)                                       | [kattis][kattis-checker]           | [kattis][kattis-interactor]                         | N/A                          |                                                                                     |
 | [HelloJudge](https://yt2soj.top/rs/)                                        | [hello_judge][hello_judge-checker] | N/A                                                 | N/A                          |                                                                                     |
 | [HustOJ](http://www.hustoj.org/)                                            | [hustoj][hustoj-checker]           | N/A                                                 | N/A                          |                                                                                     |
@@ -25,6 +26,8 @@
 
 [arbiter-checker]: include/arbiter/checker.hpp
 [cms-checker]: include/cms/checker.hpp
+[coci-checker]: include/coci/checker.hpp
+[coci-interactor]: include/coci/interactor.hpp
 [hello_judge-checker]: include/hello_judge/checker.hpp
 [hustoj-checker]: include/hustoj/checker.hpp
 [kattis-checker]: include/kattis/checker.hpp

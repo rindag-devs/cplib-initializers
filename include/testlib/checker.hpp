@@ -65,7 +65,7 @@ inline auto xml_escape(std::string_view s) -> std::string {
 }
 }  // namespace detail
 
-enum class ExitCode {
+enum struct ExitCode {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,
@@ -94,7 +94,7 @@ struct Reporter : cplib::checker::Reporter {
 
   auto print_score(double score) -> void {
     if (percent_mode) {
-      stream << std::llround(score * 100);
+      stream << std::llround(score * 100.0);
     } else {
       stream << score;
     }

@@ -41,7 +41,7 @@ struct Reporter : cplib::checker::Reporter {
     std::ostream score(std::cout.rdbuf());
     std::ostream message(std::clog.rdbuf());
 
-    score << std::fixed << std::setprecision(9) << report.score * 100;
+    score << std::fixed << std::setprecision(9) << report.score * 100.0;
 
     message << std::fixed << std::setprecision(2) << report.status.to_string() << ", scores "
             << report.score * 100.0 << " of 100.\n";

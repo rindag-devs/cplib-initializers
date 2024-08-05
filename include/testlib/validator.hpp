@@ -31,7 +31,7 @@
 
 namespace cplib_initializers::testlib::validator {
 
-enum class ExitCode {
+enum struct ExitCode {
   OK = 0,
   INTERNAL_ERROR = 3,
 };

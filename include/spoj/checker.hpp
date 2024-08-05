@@ -43,7 +43,7 @@ struct Reporter : cplib::checker::Reporter {
     cplib::var::detail::make_ostream_by_fileno(SPOJ_P_INFO_FD, message_buf, message);
 
     if (report.status == Status::PARTIALLY_CORRECT) {
-      score << std::llround(report.score * 100) << '\n';
+      score << std::llround(report.score * 100.0) << '\n';
     }
 
     message << report.status.to_string() << ".\n";

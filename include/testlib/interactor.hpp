@@ -63,7 +63,7 @@ inline auto xml_escape(std::string_view s) -> std::string {
 }
 }  // namespace detail
 
-enum class ExitCode {
+enum struct ExitCode {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,
@@ -78,7 +78,7 @@ struct Reporter : cplib::interactor::Reporter {
 
   auto print_score(double score) -> void {
     if (percent_mode) {
-      stream << std::llround(score * 100);
+      stream << std::llround(score * 100.0);
     } else {
       stream << score;
     }
@@ -151,8 +151,7 @@ struct Initializer : cplib::interactor::Initializer {
   auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
     auto &state = this->state();
 
-    // Use PlainTextReporter to handle errors during the init process
-    state.reporter = std::make_unique<cplib::interactor::PlainTextReporter>();
+    state.reporter = std::make_unique<Reporter>(percent_mode);
 
     auto parsed_args = cplib::cmd_args::ParsedArgs(args);
 
@@ -168,8 +167,6 @@ struct Initializer : cplib::interactor::Initializer {
     set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::NONE);
     set_from_user_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
     set_to_user_fileno(fileno(stdout));
-
-    state.reporter = std::make_unique<Reporter>(percent_mode);
   }
 };
 }  // namespace cplib_initializers::testlib::interactor

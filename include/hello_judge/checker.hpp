@@ -45,7 +45,7 @@ struct Reporter : cplib::checker::Reporter {
     std::ofstream score(FILENAME_SCORE.data(), std::ios_base::binary);
     std::ofstream message(FILENAME_MESSAGE.data(), std::ios_base::binary);
 
-    score << std::llround(report.score * 100);
+    score << std::llround(report.score * 100.0);
 
     message << std::fixed << std::setprecision(2) << report.status.to_string() << ", scores "
             << report.score * 100.0 << " of 100.\n";

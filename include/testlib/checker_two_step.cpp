@@ -39,7 +39,7 @@
 
 CPLIB_REGISTER_CHECKER_OPT(chk, cplib_initializers::testlib::checker::Initializer(true));
 
-enum class ExitCode {
+enum struct ExitCode {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,

@@ -90,7 +90,7 @@ inline auto base64_encode(const std::vector<std::uint8_t> &input) -> std::string
 }
 }  // namespace detail
 
-enum class ExitCode {
+enum struct ExitCode {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,
