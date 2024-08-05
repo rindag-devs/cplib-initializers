@@ -44,7 +44,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report &report) -> void override {
+  auto report(const Report &report) -> int override {
     std::ostream score(std::clog.rdbuf());
     std::ostream message(std::cout.rdbuf());
 
@@ -69,15 +69,15 @@ struct Reporter : cplib::checker::Reporter {
 
     switch (report.status) {
       case Status::INTERNAL_ERROR:
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
       case Status::ACCEPTED:
-        std::exit(static_cast<int>(ExitCode::ACCEPTED));
+        return static_cast<int>(ExitCode::ACCEPTED);
       case Status::WRONG_ANSWER:
-        std::exit(static_cast<int>(ExitCode::WRONG_ANSWER));
+        return static_cast<int>(ExitCode::WRONG_ANSWER);
       case Status::PARTIALLY_CORRECT:
-        std::exit(static_cast<int>(ExitCode::PARTIALLY_CORRECT));
+        return static_cast<int>(ExitCode::PARTIALLY_CORRECT);
       default:
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
     }
   }
 };

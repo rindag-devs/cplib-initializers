@@ -38,7 +38,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report& report) -> void override {
+  auto report(const Report& report) -> int override {
     std::ofstream score(FILENAME_SCORE.data(), std::ios_base::binary);
     std::ostream message(std::clog.rdbuf());
 
@@ -58,7 +58,7 @@ struct Reporter : cplib::interactor::Reporter {
       }
     }
 
-    std::exit(0);
+    return 0;
   }
 };
 

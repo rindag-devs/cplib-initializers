@@ -45,7 +45,7 @@ struct LemonReporter : cplib::checker::Reporter {
         score(score_path.data(), std::ios_base::binary),
         message(report_path.data(), std::ios_base::binary) {}
 
-  [[noreturn]] auto report(const Report &report) -> void override {
+  auto report(const Report &report) -> int override {
     score << std::llround(1. * report.score / max_score);
 
     message << std::fixed << std::setprecision(2) << report.status.to_string() << ", scores "
@@ -63,10 +63,10 @@ struct LemonReporter : cplib::checker::Reporter {
     }
 
     if (report.status == Status::INTERNAL_ERROR) {
-      std::exit(1);
+      return 1;
     }
 
-    std::exit(0);
+    return 0;
   }
 };
 

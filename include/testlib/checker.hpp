@@ -73,6 +73,9 @@ enum struct ExitCode {
 };
 
 struct Reporter : cplib::checker::Reporter {
+  using Report = cplib::checker::Report;
+  using Status = Report::Status;
+
   bool appes_mode;
   bool print_status{};
   bool percent_mode;
@@ -100,31 +103,31 @@ struct Reporter : cplib::checker::Reporter {
     }
   }
 
-  [[noreturn]] auto report(const cplib::checker::Report &report) -> void override {
+  auto report(const Report &report) -> int override {
     stream << std::fixed << std::setprecision(9);
 
     if (appes_mode) {
       stream << R"(<?xml version="1.0" encoding="utf-8"?><result outcome = ")";
       switch (report.status) {
-        case cplib::checker::Report::Status::INTERNAL_ERROR:
+        case Status::INTERNAL_ERROR:
           stream << "fail";
           break;
-        case cplib::checker::Report::Status::ACCEPTED:
+        case Status::ACCEPTED:
           stream << "accepted";
           break;
-        case cplib::checker::Report::Status::WRONG_ANSWER:
+        case Status::WRONG_ANSWER:
           stream << "wrong-answer";
           break;
-        case cplib::checker::Report::Status::PARTIALLY_CORRECT:
+        case Status::PARTIALLY_CORRECT:
           stream << "points\" points = \"";
           print_score(report.score);
           break;
         default:
           stream << "FAIL invalid status\n";
-          std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+          return static_cast<int>(ExitCode::INTERNAL_ERROR);
       }
       stream << "\">";
-      if (report.status == cplib::checker::Report::Status::PARTIALLY_CORRECT) {
+      if (report.status == Status::PARTIALLY_CORRECT) {
         print_score(report.score);
         stream << ' ';
       }
@@ -132,24 +135,24 @@ struct Reporter : cplib::checker::Reporter {
     } else {
       if (print_status) {
         switch (report.status) {
-          case cplib::checker::Report::Status::INTERNAL_ERROR:
+          case Status::INTERNAL_ERROR:
             stream << "FAIL ";
             break;
-          case cplib::checker::Report::Status::ACCEPTED:
+          case Status::ACCEPTED:
             stream << "ok ";
             break;
-          case cplib::checker::Report::Status::WRONG_ANSWER:
+          case Status::WRONG_ANSWER:
             stream << "wrong answer ";
             break;
-          case cplib::checker::Report::Status::PARTIALLY_CORRECT:
+          case Status::PARTIALLY_CORRECT:
             stream << "points ";
             break;
           default:
             stream << "FAIL invalid status\n";
-            std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+            return static_cast<int>(ExitCode::INTERNAL_ERROR);
         }
       }
-      if (report.status == cplib::checker::Report::Status::PARTIALLY_CORRECT) {
+      if (report.status == Status::PARTIALLY_CORRECT) {
         print_score(report.score);
         stream << ' ';
       }
@@ -157,17 +160,17 @@ struct Reporter : cplib::checker::Reporter {
     }
 
     switch (report.status) {
-      case cplib::checker::Report::Status::INTERNAL_ERROR:
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
-      case cplib::checker::Report::Status::ACCEPTED:
-        std::exit(static_cast<int>(ExitCode::ACCEPTED));
-      case cplib::checker::Report::Status::WRONG_ANSWER:
-        std::exit(static_cast<int>(ExitCode::WRONG_ANSWER));
-      case cplib::checker::Report::Status::PARTIALLY_CORRECT:
-        std::exit(static_cast<int>(ExitCode::PARTIALLY_CORRECT));
+      case Status::INTERNAL_ERROR:
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
+      case Status::ACCEPTED:
+        return static_cast<int>(ExitCode::ACCEPTED);
+      case Status::WRONG_ANSWER:
+        return static_cast<int>(ExitCode::WRONG_ANSWER);
+      case Status::PARTIALLY_CORRECT:
+        return static_cast<int>(ExitCode::PARTIALLY_CORRECT);
       default:
         stream << "FAIL invalid status\n";
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
     }
   }
 };

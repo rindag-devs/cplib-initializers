@@ -61,24 +61,24 @@ struct Reporter : cplib::interactor::Reporter {
         score(cplib::format("%s/%s", feedback_dir.data(), FILENAME_SCORE.data()),
               std::ios_base::binary) {}
 
-  [[noreturn]] auto report(const Report& report) -> void override {
+  auto report(const Report& report) -> int override {
     switch (report.status) {
       case Status::INTERNAL_ERROR:
         judge_error << "FAIL " << report.message << '\n';
-        std::exit(EXITCODE_JE);
+        return EXITCODE_JE;
       case Status::ACCEPTED:
         judge_message << "OK\n";
-        std::exit(EXITCODE_AC);
+        return EXITCODE_AC;
       case Status::WRONG_ANSWER:
         judge_message << "WA " << report.message << '\n';
-        std::exit(EXITCODE_WA);
+        return EXITCODE_WA;
       case Status::PARTIALLY_CORRECT:
         judge_message << "PC\n";
         score << std::fixed << std::setprecision(9) << report.score << '\n';
-        std::exit(EXITCODE_AC);
+        return EXITCODE_AC;
       default:
         judge_error << "FAIL invalid status\n";
-        std::exit(EXITCODE_JE);
+        return EXITCODE_JE;
     }
   }
 

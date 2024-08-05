@@ -50,13 +50,15 @@ inline auto escape(std::string_view s) -> std::string {
 }  // namespace detail
 
 struct Reporter : cplib::checker::Reporter {
-  [[noreturn]] auto report(const cplib::checker::Report& report) -> void override {
+  using Report = cplib::checker::Report;
+
+  auto report(const Report& report) -> int override {
     std::ofstream stream(REPORT_PATH.data(), std::ios_base::binary);
 
     stream << report.status.to_string() << ": " << detail::escape(report.message) << '\n';
     stream << std::llround(report.score * 10.0) << '\n';
 
-    std::exit(0);
+    return 0;
   }
 };
 

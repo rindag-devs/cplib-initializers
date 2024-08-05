@@ -35,7 +35,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report& report) -> void override {
+  auto report(const Report& report) -> int override {
     std::unique_ptr<std::streambuf> message_buf, score_buf;
     std::ostream message(nullptr), score(nullptr);
     cplib::var::detail::make_ostream_by_fileno(SPOJ_SCORE_FD, score_buf, score);
@@ -60,15 +60,15 @@ struct Reporter : cplib::interactor::Reporter {
 
     switch (report.status) {
       case Status::INTERNAL_ERROR:
-        std::exit(SPOJ_RV_SE);
+        return SPOJ_RV_SE;
       case Status::WRONG_ANSWER:
-        std::exit(SPOJ_RV_WA);
+        return SPOJ_RV_WA;
       case Status::ACCEPTED:
       case Status::PARTIALLY_CORRECT:
-        std::exit(SPOJ_RV_AC);
+        return SPOJ_RV_AC;
       default:
         message << "FAIL invalid status\n";
-        std::exit(SPOJ_RV_SE);
+        return SPOJ_RV_SE;
     }
   }
 };

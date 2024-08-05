@@ -34,7 +34,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report &report) -> void override {
+  auto report(const Report &report) -> int override {
     std::ostream score_stream(std::cout.rdbuf());
     std::ostream status_stream(std::clog.rdbuf());
 
@@ -43,7 +43,7 @@ struct Reporter : cplib::checker::Reporter {
     switch (report.status) {
       case Status::INTERNAL_ERROR:
         status_stream << "FAIL " << report.message << '\n';
-        std::exit(1);
+        return 1;
       case Status::ACCEPTED:
         status_stream << (report.message.empty() ? "translate:success\n" : report.message);
         break;
@@ -55,10 +55,10 @@ struct Reporter : cplib::checker::Reporter {
         break;
       default:
         status_stream << "FAIL invalid status\n";
-        std::exit(1);
+        return 1;
     }
 
-    std::exit(0);
+    return 0;
   }
 };
 

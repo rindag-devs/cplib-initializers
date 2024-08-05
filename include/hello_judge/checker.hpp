@@ -41,7 +41,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report& report) -> void override {
+  auto report(const Report& report) -> int override {
     std::ofstream score(FILENAME_SCORE.data(), std::ios_base::binary);
     std::ofstream message(FILENAME_MESSAGE.data(), std::ios_base::binary);
 
@@ -61,7 +61,7 @@ struct Reporter : cplib::checker::Reporter {
       }
     }
 
-    std::exit(0);
+    return 0;
   }
 };
 

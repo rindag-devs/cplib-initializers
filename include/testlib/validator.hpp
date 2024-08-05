@@ -37,6 +37,9 @@ enum struct ExitCode {
 };
 
 struct Reporter : cplib::validator::Reporter {
+  using Report = cplib::validator::Report;
+  using Status = Report::Status;
+
   std::optional<std::ofstream> overview_log_stream;
 
   explicit Reporter(std::optional<std::string> overview_log_path) {
@@ -45,7 +48,7 @@ struct Reporter : cplib::validator::Reporter {
     }
   }
 
-  [[noreturn]] auto report(const cplib::validator::Report &report) -> void override {
+  auto report(const Report &report) -> int override {
     std::ostream message(std::clog.rdbuf());
 
     if (overview_log_stream.has_value()) {
@@ -59,17 +62,17 @@ struct Reporter : cplib::validator::Reporter {
     }
 
     switch (report.status) {
-      case cplib::validator::Report::Status::INTERNAL_ERROR:
-      case cplib::validator::Report::Status::INVALID:
+      case Status::INTERNAL_ERROR:
+      case Status::INVALID:
         message << "FAIL " << report.message << '\n';
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
         break;
-      case cplib::validator::Report::Status::VALID:
-        std::exit(static_cast<int>(ExitCode::OK));
+      case Status::VALID:
+        return static_cast<int>(ExitCode::OK);
         break;
       default:
         message << "FAIL invalid status\n";
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
     }
   }
 };

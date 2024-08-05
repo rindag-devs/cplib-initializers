@@ -98,18 +98,21 @@ enum struct ExitCode {
 };
 
 struct Reporter : cplib::interactor::Reporter {
+  using Report = cplib::interactor::Report;
+  using Status = Report::Status;
+
   std::ofstream stream;
 
   explicit Reporter(std::string_view output_file)
       : stream(output_file.data(), std::ios_base::binary) {}
 
-  [[noreturn]] auto report(const cplib::interactor::Report &report) -> void override {
+  auto report(const Report &report) -> int override {
     auto bytes = std::vector<std::uint8_t>(report.message.begin(), report.message.end());
     stream << std::fixed << std::setprecision(9);
     stream << static_cast<int>(report.status) << '\n'
            << report.score << '\n'
            << detail::base64_encode(bytes) << '\n';
-    std::exit(0);
+    return 0;
   }
 };
 

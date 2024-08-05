@@ -37,7 +37,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report& report) -> void override {
+  auto report(const Report& report) -> int override {
     std::ostream score(std::cout.rdbuf());
     std::ostream message(std::clog.rdbuf());
 
@@ -58,10 +58,10 @@ struct Reporter : cplib::checker::Reporter {
     }
 
     if (report.status == Status::INTERNAL_ERROR) {
-      std::exit(1);
+      return 1;
     }
 
-    std::exit(0);
+    return 0;
   }
 };
 

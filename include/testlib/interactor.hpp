@@ -71,6 +71,9 @@ enum struct ExitCode {
 };
 
 struct Reporter : cplib::interactor::Reporter {
+  using Report = cplib::interactor::Report;
+  using Status = Report::Status;
+
   bool percent_mode;
   std::ostream stream;
 
@@ -84,44 +87,44 @@ struct Reporter : cplib::interactor::Reporter {
     }
   }
 
-  [[noreturn]] auto report(const cplib::interactor::Report &report) -> void override {
+  auto report(const Report &report) -> int override {
     stream << std::fixed << std::setprecision(10);
 
     switch (report.status) {
-      case cplib::interactor::Report::Status::INTERNAL_ERROR:
+      case Status::INTERNAL_ERROR:
         stream << "FAIL ";
         break;
-      case cplib::interactor::Report::Status::ACCEPTED:
+      case Status::ACCEPTED:
         stream << "ok ";
         break;
-      case cplib::interactor::Report::Status::WRONG_ANSWER:
+      case Status::WRONG_ANSWER:
         stream << "wrong answer ";
         break;
-      case cplib::interactor::Report::Status::PARTIALLY_CORRECT:
+      case Status::PARTIALLY_CORRECT:
         stream << "points ";
         break;
       default:
         stream << "FAIL invalid status\n";
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
     }
-    if (report.status == cplib::interactor::Report::Status::PARTIALLY_CORRECT) {
+    if (report.status == Status::PARTIALLY_CORRECT) {
       print_score(report.score);
       stream << ' ';
     }
     stream << report.message << '\n';
 
     switch (report.status) {
-      case cplib::interactor::Report::Status::INTERNAL_ERROR:
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
-      case cplib::interactor::Report::Status::ACCEPTED:
-        std::exit(static_cast<int>(ExitCode::ACCEPTED));
-      case cplib::interactor::Report::Status::WRONG_ANSWER:
-        std::exit(static_cast<int>(ExitCode::WRONG_ANSWER));
-      case cplib::interactor::Report::Status::PARTIALLY_CORRECT:
-        std::exit(static_cast<int>(ExitCode::PARTIALLY_CORRECT));
+      case Status::INTERNAL_ERROR:
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
+      case Status::ACCEPTED:
+        return static_cast<int>(ExitCode::ACCEPTED);
+      case Status::WRONG_ANSWER:
+        return static_cast<int>(ExitCode::WRONG_ANSWER);
+      case Status::PARTIALLY_CORRECT:
+        return static_cast<int>(ExitCode::PARTIALLY_CORRECT);
       default:
         stream << "FAIL invalid status\n";
-        std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+        return static_cast<int>(ExitCode::INTERNAL_ERROR);
     }
   }
 };

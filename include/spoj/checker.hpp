@@ -36,7 +36,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report& report) -> void override {
+  auto report(const Report& report) -> int override {
     std::unique_ptr<std::streambuf> message_buf, score_buf;
     std::ostream message(nullptr), score(nullptr);
     cplib::var::detail::make_ostream_by_fileno(SPOJ_SCORE_FD, score_buf, score);
@@ -61,15 +61,15 @@ struct Reporter : cplib::checker::Reporter {
 
     switch (report.status) {
       case Status::INTERNAL_ERROR:
-        std::exit(SPOJ_RV_IE);
+        return SPOJ_RV_IE;
       case Status::WRONG_ANSWER:
-        std::exit(SPOJ_RV_NEGATIVE);
+        return SPOJ_RV_NEGATIVE;
       case Status::ACCEPTED:
       case Status::PARTIALLY_CORRECT:
-        std::exit(SPOJ_RV_POSITIVE);
+        return SPOJ_RV_POSITIVE;
       default:
         message << "FAIL invalid status\n";
-        std::exit(SPOJ_RV_IE);
+        return SPOJ_RV_IE;
     }
   }
 };

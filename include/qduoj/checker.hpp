@@ -48,13 +48,13 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  [[noreturn]] auto report(const Report& report) -> void override {
+  auto report(const Report& report) -> int override {
     if (report.status == Status::INTERNAL_ERROR) {
-      std::exit(static_cast<int>(ExitCode::INTERNAL_ERROR));
+      return static_cast<int>(ExitCode::INTERNAL_ERROR);
     } else if (report.status == Status::ACCEPTED || report.score == 1.0) {
-      std::exit(static_cast<int>(ExitCode::ACCEPTED));
+      return static_cast<int>(ExitCode::ACCEPTED);
     } else {
-      std::exit(static_cast<int>(ExitCode::WRONG_ANSWER));
+      return static_cast<int>(ExitCode::WRONG_ANSWER);
     }
   }
 };
