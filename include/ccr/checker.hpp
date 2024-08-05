@@ -13,13 +13,14 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CPLIB_INITIALIZERS_ARBITER_CHECKER_HPP_
-#define CPLIB_INITIALIZERS_ARBITER_CHECKER_HPP_
+#ifndef CPLIB_INITIALIZERS_CCR_CHECKER_HPP_
+#define CPLIB_INITIALIZERS_CCR_CHECKER_HPP_
 
 #include <cctype>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <ios>
 #include <iostream>
 #include <memory>
@@ -31,9 +32,7 @@
 
 #include "cplib.hpp"
 
-namespace cplib_initializers::arbiter::checker {
-
-constexpr std::string_view REPORT_PATH = "/tmp/_eval.score";
+namespace cplib_initializers::ccr::checker {
 
 namespace detail {
 inline auto escape(std::string_view s) -> std::string {
@@ -53,11 +52,14 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
-    std::ofstream stream(REPORT_PATH.data(), std::ios_base::binary);
+  std::ofstream stream;
 
+  explicit Reporter(std::string_view report_path)
+      : stream(report_path.data(), std::ios_base::binary) {}
+
+  auto report(const Report& report) -> int override {
+    stream << std::fixed << ' ' << std::setprecision(9) << report.score << '\n';
     stream << report.status.to_string() << ": " << detail::escape(report.message) << '\n';
-    stream << std::llround(report.score * 10.0) << '\n';
 
     if (report.status == Status::INTERNAL_ERROR) {
       return 1;
@@ -68,12 +70,12 @@ struct Reporter : cplib::checker::Reporter {
 };
 
 namespace detail {
-constexpr std::string_view ARGS_USAGE = "<input_file> <output_file> <answer_file> [...]";
+constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = cplib::format(CPLIB_STARTUP_TEXT
                                   "\n"
-                                  "Initialized with arbiter checker initializer\n"
+                                  "Initialized with ccr checker initializer\n"
                                   "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
                                   "Devs, copyright(c) 2024-present\n"
                                   "\n"
@@ -88,7 +90,8 @@ struct Initializer : cplib::checker::Initializer {
   auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
     auto& state = this->state();
 
-    state.reporter = std::make_unique<Reporter>();
+    // Use PlainTextReporter to handle errors during the init process
+    state.reporter = std::make_unique<cplib::checker::PlainTextReporter>();
 
     auto parsed_args = cplib::cmd_args::ParsedArgs(args);
 
@@ -96,20 +99,23 @@ struct Initializer : cplib::checker::Initializer {
       detail::print_help_message(arg0);
     }
 
-    if (parsed_args.ordered.size() < 3) {
+    if (parsed_args.ordered.size() < 4) {
       cplib::panic("Program must be run with the following arguments:\n  " +
                    std::string(detail::ARGS_USAGE));
     }
 
     const auto& inf = parsed_args.ordered[0];
-    const auto& ouf = parsed_args.ordered[1];
-    const auto& ans = parsed_args.ordered[2];
+    const auto& ouf = parsed_args.ordered[2];
+    const auto& ans = parsed_args.ordered[1];
 
     set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
     set_ouf_path(ouf, cplib::var::Reader::TraceLevel::NONE);
     set_ans_path(ans, cplib::var::Reader::TraceLevel::NONE);
+
+    const auto& report_path = parsed_args.ordered[3];
+    state.reporter = std::make_unique<Reporter>(report_path);
   }
 };
-}  // namespace cplib_initializers::arbiter::checker
+}  // namespace cplib_initializers::ccr::checker
 
 #endif
