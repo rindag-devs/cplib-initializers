@@ -13,8 +13,8 @@
  * CPLibInitializers. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CPLIB_INITIALIZERS_CMS_CHECKER_HPP_
-#define CPLIB_INITIALIZERS_CMS_CHECKER_HPP_
+#ifndef CPLIB_INITIALIZERS_CMS_INTERACTOR_HPP_
+#define CPLIB_INITIALIZERS_CMS_INTERACTOR_HPP_
 
 #include <cstdlib>
 #include <iomanip>
@@ -28,15 +28,17 @@
 
 #include "cplib.hpp"
 
-namespace cplib_initializers::cms::checker {
+namespace cplib_initializers::cms::interactor {
 
-struct Reporter : cplib::checker::Reporter {
-  using Report = cplib::checker::Report;
+constexpr std::string_view FILENAME_INF = "input.txt";
+
+struct Reporter : cplib::interactor::Reporter {
+  using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
   auto report(const Report &report) -> int override {
     std::ostream score_stream(std::cout.rdbuf());
-    std::ostream status_stream(std::clog.rdbuf());
+    std::ostream status_stream(std::cerr.rdbuf());
 
     score_stream << std::fixed << std::setprecision(9) << report.score << '\n';
 
@@ -63,12 +65,12 @@ struct Reporter : cplib::checker::Reporter {
 };
 
 namespace detail {
-constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file> [...]";
+constexpr std::string_view ARGS_USAGE = "<from_user_file> <to_user_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = cplib::format(CPLIB_STARTUP_TEXT
                                   "\n"
-                                  "Initialized with cms checker initializer\n"
+                                  "Initialized with cms interactor initializer\n"
                                   "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
                                   "Devs, copyright(c) 2024-present\n"
                                   "\n"
@@ -79,7 +81,7 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }
 }  // namespace detail
 
-struct Initializer : cplib::checker::Initializer {
+struct Initializer : cplib::interactor::Initializer {
   auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
     auto &state = this->state();
 
@@ -91,20 +93,24 @@ struct Initializer : cplib::checker::Initializer {
       detail::print_help_message(arg0);
     }
 
-    if (parsed_args.ordered.size() < 3) {
+    if (parsed_args.ordered.size() < 2) {
       cplib::panic("Program must be run with the following arguments:\n  " +
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto &inf = parsed_args.ordered[0];
-    const auto &ouf = parsed_args.ordered[2];
-    const auto &ans = parsed_args.ordered[1];
+    const auto &from_user_file = parsed_args.ordered[0];
+    const auto &to_user_file = parsed_args.ordered[1];
 
-    set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_path(ouf, cplib::var::Reader::TraceLevel::NONE);
-    set_ans_path(ans, cplib::var::Reader::TraceLevel::NONE);
+    // When the sandbox opens the other endpoints of these fifos to redirect
+    // them to to stdin/out it does so first for stdin and then for stdout.
+    // We must match that order as otherwise we would deadlock.
+
+    set_to_user_path(to_user_file);
+    set_from_user_path(from_user_file, cplib::var::Reader::TraceLevel::NONE);
+
+    set_inf_path(FILENAME_INF, cplib::var::Reader::TraceLevel::NONE);
   }
 };
-}  // namespace cplib_initializers::cms::checker
+}  // namespace cplib_initializers::cms::interactor
 
 #endif

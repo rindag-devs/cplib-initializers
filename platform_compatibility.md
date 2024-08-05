@@ -3,7 +3,7 @@
 | Platform                                                                    | Checker                            | Interactor                                          | Validator                    | Note                                                                                |
 | --------------------------------------------------------------------------- | ---------------------------------- | --------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
 | Arbiter (on NOI Linux 2.0)                                                  | [arbiter][arbiter-checker]         | N/A                                                 | N/A                          |                                                                                     |
-| [CMS](https://cms-dev.github.io/)                                           | [cms][cms-checker]                 | N/A                                                 | N/A                          |                                                                                     |
+| [CMS](https://cms-dev.github.io/)                                           | [cms][cms-checker]                 | [cms][cms-interactor]                               | N/A                          | interactor is only available when communication_num_processes=1                     |
 | [CodeChef](https://www.codechef.com/)                                       | [spoj][spoj-checker]               | [spoj][spoj-interactor]                             | N/A                          |                                                                                     |
 | [Codeforces Polygon](https://polygon.codeforces.com)                        | [testlib][testlib-checker]         | [testlib-two-step][testlib-interactor-two-step][^1] | [testlib][testlib-validator] | percent_mode=true, enable "Treat points from checker as a percent" in test settings |
 | [DMOJ](https://dmoj.ca/)                                                    | [coci][coci-checker]               | [coci][coci-interactor]                             | N/A                          | use "bridged" checker or interactor (aka "grader") with type "coci"                 |
@@ -26,6 +26,7 @@
 
 [arbiter-checker]: include/arbiter/checker.hpp
 [cms-checker]: include/cms/checker.hpp
+[cms-interactor]: include/cms/interactor.hpp
 [coci-checker]: include/coci/checker.hpp
 [coci-interactor]: include/coci/interactor.hpp
 [hello_judge-checker]: include/hello_judge/checker.hpp
