@@ -45,18 +45,19 @@ struct Reporter : cplib::checker::Reporter {
         status_stream << "FAIL " << report.message << '\n';
         std::exit(1);
       case Status::ACCEPTED:
-        status_stream << "translate:success\n";
+        status_stream << (report.message.empty() ? "translate:success\n" : report.message);
         break;
       case Status::WRONG_ANSWER:
-        status_stream << "translate:wrong\n";
+        status_stream << (report.message.empty() ? "translate:wrong\n" : report.message);
         break;
       case Status::PARTIALLY_CORRECT:
-        status_stream << "translate:partial\n";
+        status_stream << (report.message.empty() ? "translate:partial\n" : report.message);
         break;
       default:
         status_stream << "FAIL invalid status\n";
         std::exit(1);
     }
+
     std::exit(0);
   }
 };
