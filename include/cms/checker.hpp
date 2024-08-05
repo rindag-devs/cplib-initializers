@@ -31,23 +31,26 @@
 namespace cplib_initializers::cms::checker {
 
 struct Reporter : cplib::checker::Reporter {
-  [[noreturn]] auto report(const cplib::checker::Report& report) -> void override {
+  using Report = cplib::checker::Report;
+  using Status = Report::Status;
+
+  [[noreturn]] auto report(const Report &report) -> void override {
     std::ostream score_stream(std::cout.rdbuf());
     std::ostream status_stream(std::clog.rdbuf());
 
     score_stream << std::fixed << std::setprecision(9) << report.score << '\n';
 
     switch (report.status) {
-      case cplib::checker::Report::Status::INTERNAL_ERROR:
-        status_stream << "FAIL " << report.status << '\n';
+      case Status::INTERNAL_ERROR:
+        status_stream << "FAIL " << report.message << '\n';
         std::exit(1);
-      case cplib::checker::Report::Status::ACCEPTED:
+      case Status::ACCEPTED:
         status_stream << "translate:success\n";
         break;
-      case cplib::checker::Report::Status::WRONG_ANSWER:
+      case Status::WRONG_ANSWER:
         status_stream << "translate:wrong\n";
         break;
-      case cplib::checker::Report::Status::PARTIALLY_CORRECT:
+      case Status::PARTIALLY_CORRECT:
         status_stream << "translate:partial\n";
         break;
       default:
@@ -76,8 +79,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
@@ -92,9 +95,9 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto& inf = parsed_args.ordered[0];
-    const auto& ouf = parsed_args.ordered[2];
-    const auto& ans = parsed_args.ordered[1];
+    const auto &inf = parsed_args.ordered[0];
+    const auto &ouf = parsed_args.ordered[2];
+    const auto &ans = parsed_args.ordered[1];
 
     set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
     set_ouf_path(ouf, cplib::var::Reader::TraceLevel::NONE);
