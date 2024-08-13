@@ -39,8 +39,8 @@ struct Reporter : cplib::checker::Reporter {
   auto report(const Report& report) -> int override {
     std::unique_ptr<std::streambuf> message_buf, score_buf;
     std::ostream message(nullptr), score(nullptr);
-    cplib::var::detail::make_ostream_by_fileno(SPOJ_SCORE_FD, score_buf, score);
-    cplib::var::detail::make_ostream_by_fileno(SPOJ_P_INFO_FD, message_buf, message);
+    cplib::io::detail::make_ostream_by_fileno(SPOJ_SCORE_FD, score_buf, score);
+    cplib::io::detail::make_ostream_by_fileno(SPOJ_P_INFO_FD, message_buf, message);
 
     if (report.status == Status::PARTIALLY_CORRECT) {
       score << std::llround(report.score * 100.0) << '\n';
@@ -52,10 +52,13 @@ struct Reporter : cplib::checker::Reporter {
       message << report.message << '\n';
     }
 
-    if (trace_stack_.has_value()) {
-      message << "\nReader trace stack (most recent variable last):\n";
-      for (const auto& line : trace_stack_->to_plain_text_lines()) {
-        message << "  " << line << '\n';
+    if (!trace_stacks_.empty()) {
+      message << "\nReader trace stacks (most recent variable last):";
+      for (const auto& [_, stack] : trace_stacks_) {
+        for (const auto& line : stack.to_plain_text_lines()) {
+          message << '\n' << "  " << line;
+        }
+        message << '\n';
       }
     }
 

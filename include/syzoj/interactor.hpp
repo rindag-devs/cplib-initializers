@@ -51,10 +51,13 @@ struct Reporter : cplib::interactor::Reporter {
       message << report.message << '\n';
     }
 
-    if (trace_stack_.has_value()) {
-      message << "\nReader trace stack (most recent variable last):\n";
-      for (const auto& line : trace_stack_->to_plain_text_lines()) {
-        message << "  " << line << '\n';
+    if (!trace_stacks_.empty()) {
+      message << "\nReader trace stacks (most recent variable last):";
+      for (const auto& [_, stack] : trace_stacks_) {
+        for (const auto& line : stack.to_plain_text_lines()) {
+          message << '\n' << "  " << line;
+        }
+        message << '\n';
       }
     }
 

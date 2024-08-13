@@ -88,9 +88,9 @@ struct Reporter : cplib::checker::Reporter {
         stream(std::ostream(nullptr)),
         buf(nullptr) {
     if (report_file.has_value()) {
-      cplib::var::detail::make_ostream_by_path(*report_file, buf, stream);
+      cplib::io::detail::make_ostream_by_path(*report_file, buf, stream);
     } else {
-      cplib::var::detail::make_ostream_by_fileno(fileno(stderr), buf, stream);
+      cplib::io::detail::make_ostream_by_fileno(fileno(stderr), buf, stream);
       print_status = true;
     }
   }
