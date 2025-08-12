@@ -17,6 +17,7 @@
 #define CPLIB_INITIALIZERS_COCI_CHECKER_HPP_
 
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <iomanip>
@@ -29,10 +30,11 @@
 #include <vector>
 
 #include "cplib.hpp"
+#include "trace.hpp"
 
 namespace cplib_initializers::coci::checker {
 
-enum struct ExitCode {
+enum struct ExitCode : std::uint8_t {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,
@@ -43,7 +45,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     std::ostream score(std::clog.rdbuf());
     std::ostream message(std::cout.rdbuf());
 
@@ -59,13 +61,20 @@ struct Reporter : cplib::checker::Reporter {
       message << report.message << '\n';
     }
 
-    if (!trace_stacks_.empty()) {
+    if (!reader_trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto &[_, stack] : trace_stacks_) {
-        for (const auto &line : stack.to_plain_text_lines()) {
+      for (const auto& stack : reader_trace_stacks_) {
+        for (const auto& line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
         message << '\n';
+      }
+    }
+
+    if (!evaluator_trace_stacks_.empty()) {
+      message << "\nEvaluator trace stacks:\n";
+      for (const auto& stack : evaluator_trace_stacks_) {
+        message << "  " << stack.to_plain_text_compact() << '\n';
       }
     }
 
@@ -102,8 +111,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
@@ -118,9 +127,10 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ouf_path(parsed_args.ordered[1], cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ans_path(parsed_args.ordered[2], cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_inf_path(parsed_args.ordered[0], cplib::trace::Level::STACK_ONLY);
+    set_ouf_path(parsed_args.ordered[1], cplib::trace::Level::STACK_ONLY);
+    set_ans_path(parsed_args.ordered[2], cplib::trace::Level::STACK_ONLY);
+    set_evaluator(cplib::trace::Level::STACK_ONLY);
   }
 };
 }  // namespace cplib_initializers::coci::checker

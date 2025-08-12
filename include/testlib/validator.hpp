@@ -16,6 +16,7 @@
 #ifndef CPLIB_INITIALIZERS_TESTLIB_VALIDATOR_HPP_
 #define CPLIB_INITIALIZERS_TESTLIB_VALIDATOR_HPP_
 
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -31,7 +32,7 @@
 
 namespace cplib_initializers::testlib::validator {
 
-enum struct ExitCode {
+enum struct ExitCode : std::uint8_t {
   OK = 0,
   INTERNAL_ERROR = 3,
 };
@@ -114,7 +115,7 @@ struct Initializer : cplib::validator::Initializer {
 
     state.reporter = std::make_unique<Reporter>(overview_log_path);
 
-    set_inf_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
+    set_inf_fileno(fileno(stdin), cplib::trace::Level::NONE);
   }
 };
 }  // namespace cplib_initializers::testlib::validator

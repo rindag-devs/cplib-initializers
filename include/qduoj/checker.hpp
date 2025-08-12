@@ -28,6 +28,7 @@
 #ifndef CPLIB_INITIALIZERS_QDUOJ_CHECKER_HPP_
 #define CPLIB_INITIALIZERS_QDUOJ_CHECKER_HPP_
 
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
 #include <string>
@@ -38,7 +39,7 @@
 
 namespace cplib_initializers::qduoj::checker {
 
-enum struct ExitCode {
+enum struct ExitCode : std::int8_t {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = -1,
@@ -98,8 +99,8 @@ struct Initializer : cplib::checker::Initializer {
     const auto& inf = parsed_args.ordered[0];
     const auto& ouf = parsed_args.ordered[1];
 
-    set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_path(ouf, cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(inf, cplib::trace::Level::NONE);
+    set_ouf_path(ouf, cplib::trace::Level::NONE);
 
     state.reporter = std::make_unique<Reporter>();
   }

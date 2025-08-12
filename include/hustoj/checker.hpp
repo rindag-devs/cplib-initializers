@@ -25,6 +25,7 @@
 #ifndef CPLIB_INITIALIZERS_HUSTOJ_CHECKER_HPP_
 #define CPLIB_INITIALIZERS_HUSTOJ_CHECKER_HPP_
 
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
 #include <string>
@@ -32,10 +33,11 @@
 #include <vector>
 
 #include "cplib.hpp"
+#include "trace.hpp"
 
 namespace cplib_initializers::hustoj::checker {
 
-enum struct ExitCode {
+enum struct ExitCode : std::uint8_t {
   ACCEPTED = 0,
   ERROR = 1,
 };
@@ -93,9 +95,10 @@ struct Initializer : cplib::checker::Initializer {
     const auto& ouf = parsed_args.ordered[2];
     const auto& ans = parsed_args.ordered[1];
 
-    set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_path(ouf, cplib::var::Reader::TraceLevel::NONE);
-    set_ans_path(ans, cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(inf, cplib::trace::Level::NONE);
+    set_ouf_path(ouf, cplib::trace::Level::NONE);
+    set_ans_path(ans, cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::NONE);
 
     state.reporter = std::make_unique<Reporter>();
   }

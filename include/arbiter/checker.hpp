@@ -54,7 +54,7 @@ struct Reporter : cplib::checker::Reporter {
   using Status = Report::Status;
 
   auto report(const Report& report) -> int override {
-    std::ofstream stream(REPORT_PATH.data(), std::ios_base::binary);
+    std::ofstream stream(std::string(REPORT_PATH), std::ios_base::binary);
 
     stream << report.status.to_string() << ": " << detail::escape(report.message) << '\n';
     stream << std::llround(report.score * 10.0) << '\n';
@@ -105,9 +105,10 @@ struct Initializer : cplib::checker::Initializer {
     const auto& ouf = parsed_args.ordered[1];
     const auto& ans = parsed_args.ordered[2];
 
-    set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_path(ouf, cplib::var::Reader::TraceLevel::NONE);
-    set_ans_path(ans, cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(inf, cplib::trace::Level::NONE);
+    set_ouf_path(ouf, cplib::trace::Level::NONE);
+    set_ans_path(ans, cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::NONE);
   }
 };
 }  // namespace cplib_initializers::arbiter::checker

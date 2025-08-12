@@ -28,6 +28,7 @@
 #include <vector>
 
 #include "cplib.hpp"
+#include "trace.hpp"
 
 namespace cplib_initializers::hello_judge::checker {
 
@@ -42,8 +43,8 @@ struct Reporter : cplib::checker::Reporter {
   using Status = Report::Status;
 
   auto report(const Report& report) -> int override {
-    std::ofstream score(FILENAME_SCORE.data(), std::ios_base::binary);
-    std::ofstream message(FILENAME_MESSAGE.data(), std::ios_base::binary);
+    std::ofstream score(std::string(FILENAME_SCORE), std::ios_base::binary);
+    std::ofstream message(std::string(FILENAME_MESSAGE), std::ios_base::binary);
 
     score << std::llround(report.score * 100.0);
 
@@ -54,13 +55,20 @@ struct Reporter : cplib::checker::Reporter {
       message << report.message << '\n';
     }
 
-    if (!trace_stacks_.empty()) {
+    if (!reader_trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto& [_, stack] : trace_stacks_) {
+      for (const auto& stack : reader_trace_stacks_) {
         for (const auto& line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
         message << '\n';
+      }
+    }
+
+    if (!evaluator_trace_stacks_.empty()) {
+      message << "\nEvaluator trace stacks:\n";
+      for (const auto& stack : evaluator_trace_stacks_) {
+        message << "  " << stack.to_plain_text_compact() << '\n';
       }
     }
 
@@ -97,9 +105,10 @@ struct Initializer : cplib::checker::Initializer {
       detail::print_help_message(arg0);
     }
 
-    set_inf_path(FILENAME_INF, cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ouf_path(FILENAME_OUF, cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ans_path(FILENAME_ANS, cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_inf_path(FILENAME_INF, cplib::trace::Level::STACK_ONLY);
+    set_ouf_path(FILENAME_OUF, cplib::trace::Level::STACK_ONLY);
+    set_ans_path(FILENAME_ANS, cplib::trace::Level::STACK_ONLY);
+    set_evaluator(cplib::trace::Level::STACK_ONLY);
   }
 };
 

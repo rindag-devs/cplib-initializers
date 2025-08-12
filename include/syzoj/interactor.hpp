@@ -39,7 +39,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Status = Report::Status;
 
   auto report(const Report& report) -> int override {
-    std::ofstream score(FILENAME_SCORE.data(), std::ios_base::binary);
+    std::ofstream score(std::string(FILENAME_SCORE), std::ios_base::binary);
     std::ostream message(std::clog.rdbuf());
 
     score << std::fixed << std::setprecision(9) << report.score * 100.0;
@@ -53,7 +53,7 @@ struct Reporter : cplib::interactor::Reporter {
 
     if (!trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto& [_, stack] : trace_stacks_) {
+      for (const auto& stack : trace_stacks_) {
         for (const auto& line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
@@ -94,8 +94,8 @@ struct Initializer : cplib::interactor::Initializer {
       detail::print_help_message(arg0);
     }
 
-    set_inf_path(FILENAME_INF, cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_from_user_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_inf_path(FILENAME_INF, cplib::trace::Level::STACK_ONLY);
+    set_from_user_fileno(fileno(stdin), cplib::trace::Level::STACK_ONLY);
     set_to_user_fileno(fileno(stdout));
   }
 };

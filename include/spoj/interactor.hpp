@@ -53,7 +53,7 @@ struct Reporter : cplib::interactor::Reporter {
 
     if (!trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto& [_, stack] : trace_stacks_) {
+      for (const auto& stack : trace_stacks_) {
         for (const auto& line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
@@ -107,8 +107,8 @@ struct Initializer : cplib::interactor::Initializer {
       detail::print_help_message(arg0);
     }
 
-    set_inf_fileno(SPOJ_P_IN_FD, cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_from_user_fileno(SPOJ_T_OUT_FD, cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_inf_fileno(SPOJ_P_IN_FD, cplib::trace::Level::STACK_ONLY);
+    set_from_user_fileno(SPOJ_T_OUT_FD, cplib::trace::Level::STACK_ONLY);
     set_to_user_fileno(SPOJ_FOR_TESTED_FD);
   }
 };

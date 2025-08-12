@@ -17,6 +17,7 @@
 #define CPLIB_INITIALIZERS_TESTLIB_CHECKER_HPP_
 
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <iomanip>
@@ -32,6 +33,7 @@
 #include <vector>
 
 #include "cplib.hpp"
+#include "trace.hpp"
 
 namespace cplib_initializers::testlib::checker {
 
@@ -65,7 +67,7 @@ inline auto xml_escape(std::string_view s) -> std::string {
 }
 }  // namespace detail
 
-enum struct ExitCode {
+enum struct ExitCode : std::uint8_t {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,
@@ -215,9 +217,10 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_path(parsed_args.ordered[1], cplib::var::Reader::TraceLevel::NONE);
-    set_ans_path(parsed_args.ordered[2], cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
+    set_ouf_path(parsed_args.ordered[1], cplib::trace::Level::NONE);
+    set_ans_path(parsed_args.ordered[2], cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::NONE);
 
     std::optional<std::string> report_file = std::nullopt;
     if (parsed_args.ordered.size() >= 4) report_file = parsed_args.ordered[3];

@@ -25,6 +25,7 @@
 #ifndef CPLIB_INITIALIZERS_NOWCODER_CHECKER_HPP_
 #define CPLIB_INITIALIZERS_NOWCODER_CHECKER_HPP_
 
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
 #include <string>
@@ -32,6 +33,7 @@
 #include <vector>
 
 #include "cplib.hpp"
+#include "trace.hpp"
 
 namespace cplib_initializers::nowcoder::checker {
 
@@ -39,7 +41,7 @@ constexpr std::string_view FILENAME_INF = "input";
 constexpr std::string_view FILENAME_OUF = "user_output";
 constexpr std::string_view FILENAME_ANS = "output";
 
-enum struct ExitCode {
+enum struct ExitCode : std::uint8_t {
   ACCEPTED = 0,
   ERROR = 1,
 };
@@ -88,9 +90,10 @@ struct Initializer : cplib::checker::Initializer {
       detail::print_help_message(arg0);
     }
 
-    set_inf_path(FILENAME_INF, cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_path(FILENAME_OUF, cplib::var::Reader::TraceLevel::NONE);
-    set_ans_path(FILENAME_ANS, cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(FILENAME_INF, cplib::trace::Level::NONE);
+    set_ouf_path(FILENAME_OUF, cplib::trace::Level::NONE);
+    set_ans_path(FILENAME_ANS, cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::NONE);
 
     state.reporter = std::make_unique<Reporter>();
   }

@@ -17,6 +17,7 @@
 #define CPLIB_INITIALIZERS_TESTLIB_INTERACTOR_HPP_
 
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <iomanip>
@@ -63,7 +64,7 @@ inline auto xml_escape(std::string_view s) -> std::string {
 }
 }  // namespace detail
 
-enum struct ExitCode {
+enum struct ExitCode : std::uint8_t {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,
@@ -167,8 +168,8 @@ struct Initializer : cplib::interactor::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::NONE);
-    set_from_user_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
+    set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);
     set_to_user_fileno(fileno(stdout));
   }
 };

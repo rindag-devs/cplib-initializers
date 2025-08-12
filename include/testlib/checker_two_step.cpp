@@ -37,15 +37,6 @@
 #include "cplib.hpp"
 #include "testlib/checker.hpp"
 
-CPLIB_REGISTER_CHECKER_OPT(chk, cplib_initializers::testlib::checker::Initializer(true));
-
-enum struct ExitCode {
-  ACCEPTED = 0,
-  WRONG_ANSWER = 1,
-  INTERNAL_ERROR = 3,
-  PARTIALLY_CORRECT = 7,
-};
-
 inline auto xml_escape(std::string_view s) -> std::string {
   std::stringbuf buf(std::ios_base::out);
   for (auto c : s) {
@@ -93,7 +84,7 @@ constexpr std::array<std::uint8_t, 256> decode_table{
     0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64, 0x64};
 
 inline auto is_valid_base64_char(char c) -> bool {
-  const auto decode_byte = decode_table[c];
+  const auto decode_byte = decode_table[static_cast<unsigned char>(c)];
   return decode_byte != 0x64;
 }
 
@@ -117,7 +108,10 @@ inline auto is_valid_base64_str(std::string_view encoded_str) -> bool {
 
 inline auto decode_quad(char a, char b, char c, char d) -> std::array<std::uint8_t, 3> {
   const std::uint32_t concat_bytes =
-      (decode_table[a] << 18) | (decode_table[b] << 12) | (decode_table[c] << 6) | decode_table[d];
+      (static_cast<std::uint32_t>(decode_table[static_cast<unsigned char>(a)]) << 18) |
+      (static_cast<std::uint32_t>(decode_table[static_cast<unsigned char>(b)]) << 12) |
+      (static_cast<std::uint32_t>(decode_table[static_cast<unsigned char>(c)]) << 6) |
+      static_cast<std::uint32_t>(decode_table[static_cast<unsigned char>(d)]);
 
   const std::uint8_t byte1 = (concat_bytes >> 16) & 0b1111'1111;
   const std::uint8_t byte2 = (concat_bytes >> 8) & 0b1111'1111;
@@ -127,7 +121,7 @@ inline auto decode_quad(char a, char b, char c, char d) -> std::array<std::uint8
 
 inline auto base64_decode(std::string_view encoded_str)
     -> std::optional<std::vector<std::uint8_t>> {
-  if (encoded_str.size() == 0) {
+  if (encoded_str.empty()) {
     return std::vector<std::uint8_t>{};
   }
 
@@ -144,7 +138,7 @@ inline auto base64_decode(std::string_view encoded_str)
   for (std::size_t i = 0; i < full_quadruples; ++i) {
     auto const quad = unpadded_encoded_str.substr(i * 4, 4);
     auto const bytes = decode_quad(quad[0], quad[1], quad[2], quad[3]);
-    std::copy(begin(bytes), end(bytes), back_inserter(decoded_bytes));
+    std::ranges::copy(bytes, std::back_inserter(decoded_bytes));
   }
 
   if (auto const last_quad = unpadded_encoded_str.substr(full_quadruples * 4);
@@ -161,16 +155,69 @@ inline auto base64_decode(std::string_view encoded_str)
   return decoded_bytes;
 }
 
-auto checker_main() -> void {
-  auto [status, score] = chk.ouf(cplib::var::i32("status"), cplib::var::f64("score"));
+enum struct ExitCode : std::uint8_t {
+  ACCEPTED = 0,
+  WRONG_ANSWER = 1,
+  INTERNAL_ERROR = 3,
+  PARTIALLY_CORRECT = 7,
+};
 
+struct Input {
+  static auto read(cplib::var::Reader&) -> Input { return {}; }
+};
+
+struct Output {
+  int status;
+  double score;
   std::string message;
-  if (!chk.ouf.inner().seek_eof()) {
-    auto encoded_message = chk.ouf.read(cplib::var::String("encoded_message"));
-    auto bytes = *base64_decode(encoded_message);
-    message = std::string(bytes.begin(), bytes.end());
+
+  static auto read(cplib::var::Reader& in, const Input&) -> Output {
+    auto status = in.read(cplib::var::i32("status"));
+    auto score = in.read(cplib::var::f64("score"));
+
+    // Check if there's an optional message
+    std::string encoded_message_str;
+    if (!in.inner().seek_eof()) {
+      encoded_message_str = in.read(cplib::var::String("encoded_message"));
+      auto bytes = base64_decode(encoded_message_str);
+      if (!bytes.has_value()) {
+        in.fail(cplib::format("Invalid Base64 encoding for message: {}", encoded_message_str));
+      }
+      return {
+          .status = status, .score = score, .message = std::string(bytes->begin(), bytes->end())};
+    } else {
+      return {.status = status, .score = score, .message = ""};
+    }
   }
 
-  chk.quit(cplib::checker::Report(static_cast<cplib::checker::Report::Status::Value>(status), score,
-                                  message));
-}
+  static auto evaluate(cplib::evaluate::Evaluator& ev, const Output& pans, const Output&,
+                       const Input&) -> cplib::evaluate::Result {
+    cplib::interactor::Report::Status interactor_status =
+        static_cast<cplib::interactor::Report::Status::Value>(pans.status);
+
+    cplib::evaluate::Result::Status status;
+
+    switch (interactor_status) {
+      case cplib::interactor::Report::Status::INTERNAL_ERROR:
+        ev.fail(pans.message);
+        break;
+      case cplib::interactor::Report::Status::ACCEPTED:
+        status = cplib::evaluate::Result::Status::ACCEPTED;
+        break;
+      case cplib::interactor::Report::Status::WRONG_ANSWER:
+        status = cplib::evaluate::Result::Status::WRONG_ANSWER;
+        break;
+      case cplib::interactor::Report::Status::PARTIALLY_CORRECT:
+        status = cplib::evaluate::Result::Status::PARTIALLY_CORRECT;
+        break;
+      default:
+        ev.fail(cplib::format("Unknown interactor report status: {}", pans.status));
+        break;
+    }
+
+    return {status, pans.score, pans.message};
+  }
+};
+
+CPLIB_REGISTER_CHECKER_OPT(chk, Input, Output,
+                           cplib_initializers::testlib::checker::Initializer(true));

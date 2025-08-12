@@ -106,9 +106,9 @@ struct Initializer : cplib::interactor::Initializer {
     // We must match that order as otherwise we would deadlock.
 
     set_to_user_path(to_user_file);
-    set_from_user_path(from_user_file, cplib::var::Reader::TraceLevel::NONE);
+    set_from_user_path(from_user_file, cplib::trace::Level::NONE);
 
-    set_inf_path(FILENAME_INF, cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(FILENAME_INF, cplib::trace::Level::NONE);
   }
 };
 }  // namespace cplib_initializers::cms::interactor

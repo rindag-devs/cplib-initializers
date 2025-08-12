@@ -66,7 +66,7 @@ inline auto base64_encode(const std::vector<std::uint8_t> &input) -> std::string
         std::vector<std::uint8_t>(input.begin() + static_cast<std::ptrdiff_t>(i) * 3,
                                   input.begin() + static_cast<std::ptrdiff_t>(i) * 3 + 4);
     const auto base64_chars = encode_triplet(triplet[0], triplet[1], triplet[2]);
-    std::copy(begin(base64_chars), end(base64_chars), back_inserter(output));
+    std::ranges::copy(base64_chars, back_inserter(output));
   }
 
   if (const auto remaining_chars = size - full_triples * 3; remaining_chars == 2) {
@@ -90,7 +90,7 @@ inline auto base64_encode(const std::vector<std::uint8_t> &input) -> std::string
 }
 }  // namespace detail
 
-enum struct ExitCode {
+enum struct ExitCode : std::uint8_t {
   ACCEPTED = 0,
   WRONG_ANSWER = 1,
   INTERNAL_ERROR = 3,
@@ -104,7 +104,7 @@ struct Reporter : cplib::interactor::Reporter {
   std::ofstream stream;
 
   explicit Reporter(std::string_view output_file)
-      : stream(output_file.data(), std::ios_base::binary) {}
+      : stream(std::string(output_file), std::ios_base::binary) {}
 
   auto report(const Report &report) -> int override {
     auto bytes = std::vector<std::uint8_t>(report.message.begin(), report.message.end());
@@ -151,8 +151,8 @@ struct Initializer : cplib::interactor::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::NONE);
-    set_from_user_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
+    set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);
     set_to_user_fileno(fileno(stdout));
 
     const auto &report_file = parsed_args.ordered[1];

@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "cplib.hpp"
+#include "trace.hpp"
 
 namespace cplib_initializers::lemon::checker {
 
@@ -42,10 +43,10 @@ struct LemonReporter : cplib::checker::Reporter {
   explicit LemonReporter(std::int32_t max_score, std::string_view score_path,
                          std::string_view report_path)
       : max_score(max_score),
-        score(score_path.data(), std::ios_base::binary),
-        message(report_path.data(), std::ios_base::binary) {}
+        score(std::string(score_path), std::ios_base::binary),
+        message(std::string(report_path), std::ios_base::binary) {}
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     score << std::llround(1. * report.score / max_score);
 
     message << std::fixed << std::setprecision(2) << report.status.to_string() << ", scores "
@@ -55,13 +56,20 @@ struct LemonReporter : cplib::checker::Reporter {
       message << report.message << '\n';
     }
 
-    if (!trace_stacks_.empty()) {
+    if (!reader_trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto &[_, stack] : trace_stacks_) {
-        for (const auto &line : stack.to_plain_text_lines()) {
+      for (const auto& stack : reader_trace_stacks_) {
+        for (const auto& line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
         message << '\n';
+      }
+    }
+
+    if (!evaluator_trace_stacks_.empty()) {
+      message << "\nEvaluator trace stacks:\n";
+      for (const auto& stack : evaluator_trace_stacks_) {
+        message << "  " << stack.to_plain_text_compact() << '\n';
       }
     }
 
@@ -92,8 +100,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct LemonInitializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::checker::PlainTextReporter>();
@@ -109,9 +117,10 @@ struct LemonInitializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    set_inf_path(parsed_args.ordered[0], cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ouf_path(parsed_args.ordered[1], cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ans_path(parsed_args.ordered[2], cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_inf_path(parsed_args.ordered[0], cplib::trace::Level::STACK_ONLY);
+    set_ouf_path(parsed_args.ordered[1], cplib::trace::Level::STACK_ONLY);
+    set_ans_path(parsed_args.ordered[2], cplib::trace::Level::STACK_ONLY);
+    set_evaluator(cplib::trace::Level::STACK_ONLY);
 
     std::int32_t max_score =
         cplib::var::i32("max_score", 0, std::nullopt).parse(parsed_args.ordered[3]);

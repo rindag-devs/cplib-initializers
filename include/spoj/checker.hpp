@@ -29,6 +29,7 @@
 #include "cplib.hpp"
 #include "spoj.h"
 #include "spoj/spoj_interactive.h"
+#include "trace.hpp"
 
 namespace cplib_initializers::spoj::checker {
 
@@ -52,13 +53,20 @@ struct Reporter : cplib::checker::Reporter {
       message << report.message << '\n';
     }
 
-    if (!trace_stacks_.empty()) {
+    if (!reader_trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto& [_, stack] : trace_stacks_) {
+      for (const auto& stack : reader_trace_stacks_) {
         for (const auto& line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
         message << '\n';
+      }
+    }
+
+    if (!evaluator_trace_stacks_.empty()) {
+      message << "\nEvaluator trace stacks:\n";
+      for (const auto& stack : evaluator_trace_stacks_) {
+        message << "  " << stack.to_plain_text_compact() << '\n';
       }
     }
 
@@ -108,9 +116,10 @@ struct Initializer : cplib::checker::Initializer {
       detail::print_help_message(arg0);
     }
 
-    set_inf_fileno(SPOJ_P_IN_FD, cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ouf_fileno(SPOJ_T_OUT_FD, cplib::var::Reader::TraceLevel::STACK_ONLY);
-    set_ans_fileno(SPOJ_P_OUT_FD, cplib::var::Reader::TraceLevel::STACK_ONLY);
+    set_inf_fileno(SPOJ_P_IN_FD, cplib::trace::Level::STACK_ONLY);
+    set_ouf_fileno(SPOJ_T_OUT_FD, cplib::trace::Level::STACK_ONLY);
+    set_ans_fileno(SPOJ_P_OUT_FD, cplib::trace::Level::STACK_ONLY);
+    set_evaluator(cplib::trace::Level::STACK_ONLY);
   }
 };
 

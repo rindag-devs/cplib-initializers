@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "cplib.hpp"
+#include "trace.hpp"
 
 namespace cplib_initializers::kattis::checker {
 
@@ -44,7 +45,7 @@ constexpr std::string_view FILENAME_SCORE = "score.txt";
 namespace detail {
 inline auto is_directory(std::string_view path) -> bool {
   struct stat entry;
-  return stat(path.data(), &entry) == 0 && S_ISDIR(entry.st_mode);
+  return stat(std::string(path).c_str(), &entry) == 0 && S_ISDIR(entry.st_mode);
 }
 }  // namespace detail
 
@@ -131,9 +132,10 @@ struct Initializer : cplib::checker::Initializer {
 
     state.reporter = std::make_unique<Reporter>(feedback_dir);
 
-    set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
-    set_ouf_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
-    set_ans_path(ans, cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(inf, cplib::trace::Level::NONE);
+    set_ouf_fileno(fileno(stdin), cplib::trace::Level::NONE);
+    set_ans_path(ans, cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::NONE);
   }
 };
 

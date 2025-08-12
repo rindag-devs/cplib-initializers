@@ -45,7 +45,7 @@ constexpr std::string_view FILENAME_SCORE = "score.txt";
 namespace detail {
 inline auto is_directory(std::string_view path) -> bool {
   struct stat entry;
-  return stat(path.data(), &entry) == 0 && S_ISDIR(entry.st_mode);
+  return stat(std::string(path).c_str(), &entry) == 0 && S_ISDIR(entry.st_mode);
 }
 }  // namespace detail
 
@@ -130,8 +130,8 @@ struct Initializer : cplib::interactor::Initializer {
 
     state.reporter = std::make_unique<Reporter>(feedback_dir);
 
-    set_inf_path(inf, cplib::var::Reader::TraceLevel::NONE);
-    set_from_user_fileno(fileno(stdin), cplib::var::Reader::TraceLevel::NONE);
+    set_inf_path(inf, cplib::trace::Level::NONE);
+    set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);
     set_to_user_fileno(fileno(stdout));
   }
 };
