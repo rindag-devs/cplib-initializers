@@ -14,11 +14,7 @@ Here's a usage example:
 #include "cplib-initializers/include/testlib/checker.cpp"
 
 // Some initializers have non-default constructors where parameters can be passed to the constructor
-CPLIB_REGISTER_CHECKER_OPT(chk, cplib_initializers::testlib::checker::Initializer(true));
-
-auto checker_main() -> void {
-  // ...
-}
+CPLIB_REGISTER_CHECKER_OPT(Input, Output, cplib_initializers::testlib::checker::Initializer(true));
 ```
 
 All initializers in this project are independent. You can include a single file into your program without including the entire project.
