@@ -26,7 +26,6 @@
 #include <vector>
 
 #include "cplib.hpp"
-#include "trace.hpp"
 
 namespace cplib_initializers::syzoj::checker {
 

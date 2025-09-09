@@ -29,7 +29,6 @@
 #include "cplib.hpp"
 #include "spoj.h"
 #include "spoj/spoj_interactive.h"
-#include "trace.hpp"
 
 namespace cplib_initializers::spoj::checker {
 
