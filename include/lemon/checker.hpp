@@ -46,7 +46,7 @@ struct LemonReporter : cplib::checker::Reporter {
         message(std::string(report_path), std::ios_base::binary) {}
 
   auto report(const Report& report) -> int override {
-    score << std::llround(1. * report.score / max_score);
+    score << std::llround(1. * report.score * max_score);
 
     message << std::fixed << std::setprecision(2) << report.status.to_string() << ", scores "
             << report.score * 100.0 << " of 100.\n";
