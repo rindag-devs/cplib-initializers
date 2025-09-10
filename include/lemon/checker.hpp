@@ -98,7 +98,7 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }
 }  // namespace detail
 
-struct LemonInitializer : cplib::checker::Initializer {
+struct Initializer : cplib::checker::Initializer {
   auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
     auto& state = this->state();
 
