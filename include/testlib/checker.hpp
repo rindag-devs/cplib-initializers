@@ -219,7 +219,7 @@ struct Initializer : cplib::checker::Initializer {
     set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
     set_ouf_path(parsed_args.ordered[1], cplib::trace::Level::NONE);
     set_ans_path(parsed_args.ordered[2], cplib::trace::Level::NONE);
-    set_evaluator(cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::STACK_ONLY);
 
     std::optional<std::string> report_file = std::nullopt;
     if (parsed_args.ordered.size() >= 4) report_file = parsed_args.ordered[3];

@@ -103,7 +103,7 @@ struct Initializer : cplib::checker::Initializer {
     set_inf_path(inf, cplib::trace::Level::NONE);
     set_ouf_path(ouf, cplib::trace::Level::NONE);
     set_ans_path(ans, cplib::trace::Level::NONE);
-    set_evaluator(cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::STACK_ONLY);
   }
 };
 }  // namespace cplib_initializers::cms::checker

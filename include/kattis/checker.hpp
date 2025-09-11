@@ -134,7 +134,7 @@ struct Initializer : cplib::checker::Initializer {
     set_inf_path(inf, cplib::trace::Level::NONE);
     set_ouf_fileno(fileno(stdin), cplib::trace::Level::NONE);
     set_ans_path(ans, cplib::trace::Level::NONE);
-    set_evaluator(cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::STACK_ONLY);
   }
 };
 
