@@ -172,13 +172,16 @@ struct Output {
   std::string message;
 
   static auto read(cplib::var::Reader& in, const Input&) -> Output {
+    if (in.inner().name() == "ans") {
+      return {.status = cplib::interactor::Report::Status::ACCEPTED, .score = 1.0, .message = ""};
+    }
+
     auto status = in.read(cplib::var::i32("status"));
     auto score = in.read(cplib::var::f64("score"));
 
     // Check if there's an optional message
-    std::string encoded_message_str;
     if (!in.inner().seek_eof()) {
-      encoded_message_str = in.read(cplib::var::String("encoded_message"));
+      auto encoded_message_str = in.read(cplib::var::String("encoded_message"));
       auto bytes = base64_decode(encoded_message_str);
       if (!bytes.has_value()) {
         in.fail(cplib::format("Invalid Base64 encoding for message: {}", encoded_message_str));
