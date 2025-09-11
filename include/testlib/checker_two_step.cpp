@@ -222,4 +222,5 @@ struct Output {
   }
 };
 
-CPLIB_REGISTER_CHECKER_OPT(Input, Output, cplib_initializers::testlib::checker::Initializer(true));
+CPLIB_REGISTER_CHECKER_OPT(Input, Output,
+                           ::cplib_initializers::testlib::checker::Initializer(true));
