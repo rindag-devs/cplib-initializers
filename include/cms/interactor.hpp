@@ -16,6 +16,7 @@
 #ifndef CPLIB_INITIALIZERS_CMS_INTERACTOR_HPP_
 #define CPLIB_INITIALIZERS_CMS_INTERACTOR_HPP_
 
+#include <csignal>
 #include <cstdlib>
 #include <iomanip>
 #include <ios>
@@ -104,6 +105,8 @@ struct Initializer : cplib::interactor::Initializer {
     // When the sandbox opens the other endpoints of these fifos to redirect
     // them to to stdin/out it does so first for stdin and then for stdout.
     // We must match that order as otherwise we would deadlock.
+
+    signal(SIGPIPE, SIG_IGN);
 
     set_to_user_path(to_user_file);
     set_from_user_path(from_user_file, cplib::trace::Level::NONE);
