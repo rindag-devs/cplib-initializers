@@ -66,15 +66,15 @@ struct Reporter : cplib::checker::Reporter {
         judge_error << "FAIL " << report.message << '\n';
         return EXITCODE_JE;
       case Status::ACCEPTED:
-        judge_message << "OK\n";
+        judge_message << "OK " << report.message << '\n';
         return EXITCODE_AC;
       case Status::WRONG_ANSWER:
         judge_message << "WA " << report.message << '\n';
         return EXITCODE_WA;
       case Status::PARTIALLY_CORRECT:
-        judge_message << "PC\n";
+        judge_message << "PC " << report.message << '\n';
         score << std::fixed << std::setprecision(9) << report.score << '\n';
-        return EXITCODE_AC;
+        return EXITCODE_WA;
       default:
         judge_error << "FAIL invalid status\n";
         return EXITCODE_JE;
