@@ -24,6 +24,7 @@
 #include <ios>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -75,10 +76,24 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
+  bool appes_mode;
+  bool print_status{};
   bool percent_mode;
   std::ostream stream;
+  std::unique_ptr<std::streambuf> buf;
 
-  explicit Reporter(bool percent_mode) : percent_mode(percent_mode), stream(std::clog.rdbuf()) {}
+  explicit Reporter(std::optional<std::string> report_file, bool appes_mode, bool percent_mode)
+      : appes_mode(appes_mode),
+        percent_mode(percent_mode),
+        stream(std::ostream(nullptr)),
+        buf(nullptr) {
+    if (report_file.has_value()) {
+      cplib::io::detail::make_ostream_by_path(*report_file, buf, stream);
+    } else {
+      cplib::io::detail::make_ostream_by_fileno(fileno(stderr), buf, stream);
+      print_status = true;
+    }
+  }
 
   auto print_score(double score) -> void {
     if (percent_mode) {
@@ -89,30 +104,60 @@ struct Reporter : cplib::interactor::Reporter {
   }
 
   auto report(const Report &report) -> int override {
-    stream << std::fixed << std::setprecision(10);
+    stream << std::fixed << std::setprecision(9);
 
-    switch (report.status) {
-      case Status::INTERNAL_ERROR:
-        stream << "FAIL ";
-        break;
-      case Status::ACCEPTED:
-        stream << "ok ";
-        break;
-      case Status::WRONG_ANSWER:
-        stream << "wrong answer ";
-        break;
-      case Status::PARTIALLY_CORRECT:
-        stream << "points ";
-        break;
-      default:
-        stream << "FAIL invalid status\n";
-        return static_cast<int>(ExitCode::INTERNAL_ERROR);
+    if (appes_mode) {
+      stream << R"(<?xml version="1.0" encoding="utf-8"?><result outcome = ")";
+      switch (report.status) {
+        case Status::INTERNAL_ERROR:
+          stream << "fail";
+          break;
+        case Status::ACCEPTED:
+          stream << "accepted";
+          break;
+        case Status::WRONG_ANSWER:
+          stream << "wrong-answer";
+          break;
+        case Status::PARTIALLY_CORRECT:
+          stream << "points\" points = \"";
+          print_score(report.score);
+          break;
+        default:
+          stream << "FAIL invalid status\n";
+          return static_cast<int>(ExitCode::INTERNAL_ERROR);
+      }
+      stream << "\">";
+      if (report.status == Status::PARTIALLY_CORRECT) {
+        print_score(report.score);
+        stream << ' ';
+      }
+      stream << detail::xml_escape(report.message) << "</result>\n";
+    } else {
+      if (print_status) {
+        switch (report.status) {
+          case Status::INTERNAL_ERROR:
+            stream << "FAIL ";
+            break;
+          case Status::ACCEPTED:
+            stream << "ok ";
+            break;
+          case Status::WRONG_ANSWER:
+            stream << "wrong answer ";
+            break;
+          case Status::PARTIALLY_CORRECT:
+            stream << "points ";
+            break;
+          default:
+            stream << "FAIL invalid status\n";
+            return static_cast<int>(ExitCode::INTERNAL_ERROR);
+        }
+      }
+      if (report.status == Status::PARTIALLY_CORRECT) {
+        print_score(report.score);
+        stream << ' ';
+      }
+      stream << report.message << '\n';
     }
-    if (report.status == Status::PARTIALLY_CORRECT) {
-      print_score(report.score);
-      stream << ' ';
-    }
-    stream << report.message << '\n';
 
     switch (report.status) {
       case Status::INTERNAL_ERROR:
@@ -131,7 +176,8 @@ struct Reporter : cplib::interactor::Reporter {
 };
 
 namespace detail {
-constexpr std::string_view ARGS_USAGE = "<input_file> [...]";
+constexpr std::string_view ARGS_USAGE =
+    "<input_file> [<dummy> <dummy> <report_file> [-appes [...]]]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = cplib::format(CPLIB_STARTUP_TEXT
@@ -155,7 +201,8 @@ struct Initializer : cplib::interactor::Initializer {
   auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
     auto &state = this->state();
 
-    state.reporter = std::make_unique<Reporter>(percent_mode);
+    // Use PlainTextReporter to handle errors during the init process
+    state.reporter = std::make_unique<cplib::interactor::PlainTextReporter>();
 
     auto parsed_args = cplib::cmd_args::ParsedArgs(args);
 
@@ -171,6 +218,21 @@ struct Initializer : cplib::interactor::Initializer {
     set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
     set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);
     set_to_user_fileno(fileno(stdout));
+
+    std::optional<std::string> report_file = std::nullopt;
+    if (parsed_args.ordered.size() >= 4) report_file = parsed_args.ordered[3];
+
+    // Some platforms may pass some platform-specific command line arguments to testlib, ignore them
+
+    bool appes_mode = false;
+
+    for (size_t i = 4; i < parsed_args.ordered.size(); ++i) {
+      if (parsed_args.ordered[i] == "-appes") {
+        appes_mode = true;
+      }
+    }
+
+    state.reporter = std::make_unique<Reporter>(report_file, appes_mode, percent_mode);
   }
 };
 }  // namespace cplib_initializers::testlib::interactor
