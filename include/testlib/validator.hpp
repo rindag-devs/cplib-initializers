@@ -48,11 +48,11 @@ struct Reporter : cplib::validator::Reporter {
     }
   }
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     std::ostream message(std::clog.rdbuf());
 
     if (overview_log_stream.has_value()) {
-      for (const auto& [name, satisfaction] : trait_status_) {
+      for (const auto &[name, satisfaction] : trait_status_) {
         *overview_log_stream << "feature \"" << name << "\":";
         if (satisfaction) {
           *overview_log_stream << " hit";
@@ -101,8 +101,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::validator::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::validator::PlainTextReporter>();

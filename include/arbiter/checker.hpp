@@ -53,7 +53,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     std::ofstream stream(std::string(REPORT_PATH), std::ios_base::binary);
 
     stream << report.status.to_string() << ": " << detail::escape(report.message) << '\n';
@@ -85,8 +85,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
@@ -101,9 +101,9 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto& inf = parsed_args.ordered[0];
-    const auto& ouf = parsed_args.ordered[1];
-    const auto& ans = parsed_args.ordered[2];
+    const auto &inf = parsed_args.ordered[0];
+    const auto &ouf = parsed_args.ordered[1];
+    const auto &ans = parsed_args.ordered[2];
 
     set_inf_path(inf, cplib::trace::Level::NONE);
     set_ouf_path(ouf, cplib::trace::Level::NONE);

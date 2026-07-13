@@ -45,7 +45,7 @@ struct LemonReporter : cplib::checker::Reporter {
         score(std::string(score_path), std::ios_base::binary),
         message(std::string(report_path), std::ios_base::binary) {}
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     score << std::llround(1. * report.score * max_score);
 
     message << std::fixed << std::setprecision(2) << report.status.to_string() << ", scores "
@@ -57,8 +57,8 @@ struct LemonReporter : cplib::checker::Reporter {
 
     if (!reader_trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto& stack : reader_trace_stacks_) {
-        for (const auto& line : stack.to_plain_text_lines()) {
+      for (const auto &stack : reader_trace_stacks_) {
+        for (const auto &line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
         message << '\n';
@@ -67,7 +67,7 @@ struct LemonReporter : cplib::checker::Reporter {
 
     if (!evaluator_trace_stacks_.empty()) {
       message << "\nEvaluator trace stacks:\n";
-      for (const auto& stack : evaluator_trace_stacks_) {
+      for (const auto &stack : evaluator_trace_stacks_) {
         message << "  " << stack.to_plain_text_compact() << '\n';
       }
     }
@@ -99,8 +99,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::checker::PlainTextReporter>();

@@ -56,7 +56,7 @@ struct Reporter : cplib::checker::Reporter {
   explicit Reporter(std::string_view report_path)
       : stream(std::string(report_path), std::ios_base::binary) {}
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     stream << std::fixed << ' ' << std::setprecision(9) << report.score << '\n';
     stream << report.status.to_string() << ": " << detail::escape(report.message) << '\n';
 
@@ -69,7 +69,8 @@ struct Reporter : cplib::checker::Reporter {
 };
 
 namespace detail {
-constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file> [...]";
+constexpr std::string_view ARGS_USAGE =
+    "<input_file> <answer_file> <output_file> <report_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
   std::string msg = std::format(CPLIB_STARTUP_TEXT
@@ -86,8 +87,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::checker::PlainTextReporter>();
@@ -103,16 +104,16 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto& inf = parsed_args.ordered[0];
-    const auto& ouf = parsed_args.ordered[2];
-    const auto& ans = parsed_args.ordered[1];
+    const auto &inf = parsed_args.ordered[0];
+    const auto &ouf = parsed_args.ordered[2];
+    const auto &ans = parsed_args.ordered[1];
 
     set_inf_path(inf, cplib::trace::Level::NONE);
     set_ouf_path(ouf, cplib::trace::Level::NONE);
     set_ans_path(ans, cplib::trace::Level::NONE);
     set_evaluator(cplib::trace::Level::STACK_ONLY);
 
-    const auto& report_path = parsed_args.ordered[3];
+    const auto &report_path = parsed_args.ordered[3];
     state.reporter = std::make_unique<Reporter>(report_path);
   }
 };

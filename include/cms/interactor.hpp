@@ -37,7 +37,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     std::ostream score_stream(std::cout.rdbuf());
     std::ostream status_stream(std::cerr.rdbuf());
 
@@ -83,8 +83,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::interactor::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
@@ -99,8 +99,8 @@ struct Initializer : cplib::interactor::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto& from_user_file = parsed_args.ordered[0];
-    const auto& to_user_file = parsed_args.ordered[1];
+    const auto &from_user_file = parsed_args.ordered[0];
+    const auto &to_user_file = parsed_args.ordered[1];
 
     // When the sandbox opens the other endpoints of these fifos to redirect
     // them to to stdin/out it does so first for stdin and then for stdout.

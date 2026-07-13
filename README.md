@@ -11,7 +11,7 @@ Here's a usage example:
 ```cpp
 #include "cplib.hpp"
 
-#include "cplib-initializers/include/testlib/checker.cpp"
+#include "cplib-initializers/include/testlib/checker.hpp"
 
 // Some initializers have non-default constructors where parameters can be passed to the constructor
 CPLIB_REGISTER_CHECKER_OPT(Input, Output, cplib_initializers::testlib::checker::Initializer(true));

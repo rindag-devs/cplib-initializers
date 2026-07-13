@@ -164,7 +164,7 @@ enum struct ExitCode : std::uint8_t {
 };
 
 struct Input {
-  static auto read(cplib::var::Reader&) -> Input { return {}; }
+  static auto read(cplib::var::Reader &) -> Input { return {}; }
 };
 
 struct Output {
@@ -172,7 +172,7 @@ struct Output {
   double score;
   std::string message;
 
-  static auto read(cplib::var::Reader& in, const Input&) -> Output {
+  static auto read(cplib::var::Reader &in, const Input &) -> Output {
     if (in.inner().name() == "ans") {
       return {.status = cplib::interactor::Report::Status::ACCEPTED, .score = 1.0, .message = ""};
     }
@@ -195,8 +195,8 @@ struct Output {
     }
   }
 
-  static auto evaluate(cplib::evaluate::Evaluator& ev, const Output& pans, const Output&,
-                       const Input&) -> cplib::evaluate::Result {
+  static auto evaluate(cplib::evaluate::Evaluator &ev, const Output &pans, const Output &,
+                       const Input &) -> cplib::evaluate::Result {
     cplib::interactor::Report::Status interactor_status =
         static_cast<cplib::interactor::Report::Status::Value>(pans.status);
 

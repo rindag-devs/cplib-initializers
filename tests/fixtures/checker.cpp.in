@@ -1,0 +1,35 @@
+#include "cplib.hpp"
+#include "@INITIALIZER_HEADER@"
+
+struct Input {
+  std::int32_t expected;
+
+  static auto read(cplib::var::Reader& in) -> Input {
+    return {in.read(cplib::var::i32("expected"))};
+  }
+};
+
+struct Output {
+  std::int32_t value;
+
+  static auto read(cplib::var::Reader& in, const Input& input) -> Output {
+#if @NO_ANSWER@
+    static bool output_read = false;
+    if (output_read) {
+      return {input.expected};
+    }
+    output_read = true;
+#endif
+    return {in.read(cplib::var::i32("value"))};
+  }
+
+  static auto evaluate(cplib::evaluate::Evaluator&, const Output& output, const Output& answer,
+                       const Input&) -> cplib::evaluate::Result {
+    if (output.value == answer.value) {
+      return cplib::evaluate::Result::ac("values match");
+    }
+    return cplib::evaluate::Result::wa("values differ");
+  }
+};
+
+CPLIB_REGISTER_CHECKER_OPT(Input, Output, @INITIALIZER@);

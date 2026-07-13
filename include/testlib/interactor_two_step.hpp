@@ -18,8 +18,8 @@
 
 #include <algorithm>
 #include <array>
-#include <cstddef>
 #include <csignal>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -56,7 +56,7 @@ inline auto encode_triplet(std::uint8_t a, std::uint8_t b, std::uint8_t c) -> st
   return {b64_char1, b64_char2, b64_char3, b64_char4};
 }
 
-inline auto base64_encode(const std::vector<std::uint8_t>& input) -> std::string {
+inline auto base64_encode(const std::vector<std::uint8_t> &input) -> std::string {
   const auto size = input.size();
   const auto full_triples = size / 3;
 
@@ -108,7 +108,7 @@ struct Reporter : cplib::interactor::Reporter {
   explicit Reporter(std::string_view output_file)
       : stream(std::string(output_file), std::ios_base::binary) {}
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     auto bytes = std::vector<std::uint8_t>(report.message.begin(), report.message.end());
     stream << std::fixed << std::setprecision(9);
     stream << static_cast<int>(report.status) << '\n'
@@ -143,8 +143,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::interactor::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::interactor::PlainTextReporter>();
@@ -166,7 +166,7 @@ struct Initializer : cplib::interactor::Initializer {
     set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);
     set_to_user_fileno(fileno(stdout));
 
-    const auto& report_file = parsed_args.ordered[1];
+    const auto &report_file = parsed_args.ordered[1];
 
     state.reporter = std::make_unique<Reporter>(report_file);
   }

@@ -1,0 +1,14 @@
+#include "cplib.hpp"
+#include "@INITIALIZER_HEADER@"
+
+CPLIB_REGISTER_INTERACTOR_OPT(interactor, @INITIALIZER@);
+
+auto interactor_main() -> void {
+  const auto expected = interactor.inf.read(cplib::var::i32("expected"));
+  interactor.to_user << "ready\n" << std::flush;
+  const auto actual = interactor.from_user.read(cplib::var::i32("actual"));
+  if (actual == expected) {
+    interactor.quit_ac();
+  }
+  interactor.quit_wa("unexpected response");
+}

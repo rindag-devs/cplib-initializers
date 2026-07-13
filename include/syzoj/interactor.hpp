@@ -38,7 +38,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     std::ofstream score(std::string(FILENAME_SCORE), std::ios_base::binary);
     std::ostream message(std::clog.rdbuf());
 
@@ -53,8 +53,8 @@ struct Reporter : cplib::interactor::Reporter {
 
     if (!trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto& stack : trace_stacks_) {
-        for (const auto& line : stack.to_plain_text_lines()) {
+      for (const auto &stack : trace_stacks_) {
+        for (const auto &line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
         message << '\n';
@@ -89,8 +89,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::interactor::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 

@@ -58,7 +58,7 @@ struct Reporter : cplib::checker::Reporter {
                     std::ios_base::binary),
         score(std::format("{}/{}", feedback_dir, FILENAME_SCORE), std::ios_base::binary) {}
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     switch (report.status) {
       case Status::INTERNAL_ERROR:
         judge_error << "FAIL " << report.message << '\n';
@@ -102,8 +102,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::checker::PlainTextReporter>();
@@ -119,9 +119,9 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto& inf = parsed_args.ordered[0];
-    const auto& ans = parsed_args.ordered[1];
-    const auto& feedback_dir = parsed_args.ordered[2];
+    const auto &inf = parsed_args.ordered[0];
+    const auto &ans = parsed_args.ordered[1];
+    const auto &feedback_dir = parsed_args.ordered[2];
 
     if (!detail::is_directory(feedback_dir)) {
       cplib::panic(feedback_dir + " is not a directory");

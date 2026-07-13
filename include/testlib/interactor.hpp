@@ -17,8 +17,8 @@
 #define CPLIB_INITIALIZERS_TESTLIB_INTERACTOR_HPP_
 
 #include <cmath>
-#include <cstdint>
 #include <csignal>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <format>
@@ -105,7 +105,7 @@ struct Reporter : cplib::interactor::Reporter {
     }
   }
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     stream << std::fixed << std::setprecision(9);
 
     if (appes_mode) {
@@ -200,8 +200,8 @@ struct Initializer : cplib::interactor::Initializer {
 
   explicit Initializer(bool percent_mode) : percent_mode(percent_mode) {}
 
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::interactor::PlainTextReporter>();

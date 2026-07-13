@@ -49,7 +49,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     if (report.status == Status::INTERNAL_ERROR) {
       return static_cast<int>(ExitCode::INTERNAL_ERROR);
     } else if (report.status == Status::ACCEPTED || report.score == 1.0) {
@@ -78,8 +78,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // QDUOJ's reporter does not have any ability to report error information, so use
     // PlainTextReporter to handle the error exit during init to provide clearer information.
@@ -96,11 +96,12 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto& inf = parsed_args.ordered[0];
-    const auto& ouf = parsed_args.ordered[1];
+    const auto &inf = parsed_args.ordered[0];
+    const auto &ouf = parsed_args.ordered[1];
 
     set_inf_path(inf, cplib::trace::Level::NONE);
     set_ouf_path(ouf, cplib::trace::Level::NONE);
+    set_evaluator(cplib::trace::Level::NONE);
 
     state.reporter = std::make_unique<Reporter>();
   }

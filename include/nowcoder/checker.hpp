@@ -49,7 +49,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     if (report.status == Status::ACCEPTED || report.score == 1.0) {
       return static_cast<int>(ExitCode::ACCEPTED);
     }
@@ -76,8 +76,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Nowcoder's reporter does not have any ability to report error information, so use
     // PlainTextReporter to handle the error exit during init to provide clearer information.

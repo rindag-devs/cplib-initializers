@@ -96,7 +96,7 @@ struct Reporter : cplib::checker::Reporter {
 
   auto print_score(double score) -> void { stream << score; }
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     stream << std::fixed << std::setprecision(9);
 
     if (appes_mode) {
@@ -187,8 +187,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::checker::PlainTextReporter>();

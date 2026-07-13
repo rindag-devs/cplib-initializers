@@ -42,7 +42,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     std::ostream score(std::clog.rdbuf());
 
     if (report.status == Status::PARTIALLY_CORRECT) {
@@ -83,8 +83,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::interactor::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 

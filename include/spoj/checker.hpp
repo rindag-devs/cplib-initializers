@@ -35,7 +35,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  auto report(const Report& report) -> int override {
+  auto report(const Report &report) -> int override {
     std::unique_ptr<std::streambuf> message_buf, score_buf;
     std::ostream message(nullptr), score(nullptr);
     cplib::io::detail::make_ostream_by_fileno(SPOJ_SCORE_FD, score_buf, score);
@@ -53,8 +53,8 @@ struct Reporter : cplib::checker::Reporter {
 
     if (!reader_trace_stacks_.empty()) {
       message << "\nReader trace stacks (most recent variable last):";
-      for (const auto& stack : reader_trace_stacks_) {
-        for (const auto& line : stack.to_plain_text_lines()) {
+      for (const auto &stack : reader_trace_stacks_) {
+        for (const auto &line : stack.to_plain_text_lines()) {
           message << '\n' << "  " << line;
         }
         message << '\n';
@@ -63,7 +63,7 @@ struct Reporter : cplib::checker::Reporter {
 
     if (!evaluator_trace_stacks_.empty()) {
       message << "\nEvaluator trace stacks:\n";
-      for (const auto& stack : evaluator_trace_stacks_) {
+      for (const auto &stack : evaluator_trace_stacks_) {
         message << "  " << stack.to_plain_text_compact() << '\n';
       }
     }
@@ -101,8 +101,8 @@ inline auto print_help_message(std::string_view program_name) -> void {
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
-    auto& state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
+    auto &state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
