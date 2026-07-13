@@ -1,6 +1,6 @@
 .tmp/
 .mimocode/
-.build/
+build/
 .pytest_cache/
 __pycache__/
 

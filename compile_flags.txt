@@ -1,3 +1,0 @@
--Ithird_party/cplib
--Iinclude
--std=c++20
