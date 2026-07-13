@@ -1,5 +1,5 @@
 {
-  description = "CPLib initializer development and test environment";
+  description = "cplib-initializers";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
 
@@ -25,7 +25,6 @@
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
-              bubblewrap
               catch2_3
               clang-tools
               cmake

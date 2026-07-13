@@ -28,7 +28,7 @@ clean:
 
 format:
   git ls-files --cached --others --exclude-standard -z -- '*.hpp' '*.cpp' | xargs -0 --no-run-if-empty clang-format -i
-  git ls-files --cached --others --exclude-standard -z -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' | xargs -0 --no-run-if-empty gersemi -i
+  git ls-files --cached --others --exclude-standard -z -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' | xargs -0 --no-run-if-empty gersemi --indent 2 --line-length 100 --no-warn-about-unknown-commands -i
   git ls-files --cached --others --exclude-standard -z -- '*.py' | xargs -0 --no-run-if-empty ruff format
 
 update:

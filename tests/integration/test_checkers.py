@@ -1,5 +1,5 @@
+import os
 import pathlib
-import subprocess
 
 import pytest
 
@@ -15,32 +15,30 @@ def common_files(tmp_path: pathlib.Path, output: int = 7):
 
 
 @pytest.mark.parametrize(
-    ("target", "order", "expected_exit"),
+    ("target", "order"),
     [
-        ("checker_coci", ("input", "output", "answer"), 0),
-        ("checker_cms", ("input", "answer", "output"), 0),
-        ("checker_hustoj", ("input", "answer", "output"), 0),
-        ("checker_testlib", ("input", "output", "answer"), 0),
+        ("checker_coci", ("input", "output", "answer")),
+        ("checker_cms", ("input", "answer", "output")),
+        ("checker_hustoj", ("input", "answer", "output")),
+        ("checker_testlib", ("input", "output", "answer")),
     ],
+    ids=["coci", "cms", "hustoj", "testlib"],
 )
-def test_path_based_checkers_follow_oj_argv(
+def test_argv_order(
     fixture_dir: pathlib.Path,
     tmp_path: pathlib.Path,
     target: str,
     order: tuple[str, ...],
-    expected_exit: int,
 ):
     input_file, output_file, answer_file = common_files(tmp_path)
     files = {"input": input_file, "output": output_file, "answer": answer_file}
 
     result = run(fixture_dir / target, *(files[name] for name in order), cwd=tmp_path)
 
-    assert result.returncode == expected_exit, result.stderr
+    assert result.returncode == 0, result.stderr
 
 
-def test_ccr_uses_required_report_argument(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_ccr_report_arg(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     input_file, output_file, answer_file = common_files(tmp_path)
     report = tmp_path / "report.txt"
 
@@ -57,9 +55,7 @@ def test_ccr_uses_required_report_argument(
     assert "accepted" in report.read_text(encoding="utf-8")
 
 
-def test_lemon_writes_platform_score_and_report(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_lemon_score_report(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     input_file, output_file, answer_file = common_files(tmp_path)
     score = tmp_path / "score.txt"
     report = tmp_path / "report.txt"
@@ -87,8 +83,9 @@ def test_lemon_writes_platform_score_and_report(
         ("checker_nowcoder", "input", "user_output", "output"),
         ("checker_syzoj", "input", "user_out", "answer"),
     ],
+    ids=["hello_judge", "nowcoder", "syzoj"],
 )
-def test_fixed_name_checkers_use_isolated_working_directory(
+def test_fixed_files(
     fixture_dir: pathlib.Path,
     tmp_path: pathlib.Path,
     target: str,
@@ -106,9 +103,7 @@ def test_fixed_name_checkers_use_isolated_working_directory(
     assert "internal_error" not in result.stderr
 
 
-def test_kattis_checker_uses_stdin_and_feedback_directory(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_kattis_stdin_feedback(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     input_file, _, answer_file = common_files(tmp_path)
     feedback = tmp_path / "feedback"
     feedback.mkdir()
@@ -126,9 +121,7 @@ def test_kattis_checker_uses_stdin_and_feedback_directory(
     assert (feedback / "judgemessage.txt").read_text(encoding="utf-8").startswith("OK")
 
 
-def test_qduoj_normal_wrong_answer_is_not_a_system_error(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_qduoj_wrong_answer(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     input_file = write(tmp_path / "input.txt", "7\n")
     output_file = write(tmp_path / "output.txt", "6\n")
 
@@ -137,9 +130,7 @@ def test_qduoj_normal_wrong_answer_is_not_a_system_error(
     assert result.returncode == 1, result.stderr
 
 
-def test_spoj_checker_uses_platform_file_descriptors(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_spoj_file_descriptors(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     input_file, output_file, answer_file = common_files(tmp_path)
     info_file = tmp_path / "info.txt"
     source_file = write(tmp_path / "source.txt", "")
@@ -171,29 +162,21 @@ def test_spoj_checker_uses_platform_file_descriptors(
     assert "accepted" in info_file.read_text(encoding="utf-8")
 
 
-def test_arbiter_absolute_report_isolated_with_bubblewrap(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_arbiter_report_redirect(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     input_file, output_file, answer_file = common_files(tmp_path)
     report = write(tmp_path / "_eval.score", "")
-    command = [
-        "bwrap",
-        "--ro-bind",
-        "/",
-        "/",
-        "--bind",
-        str(tmp_path),
-        "/tmp",
-        "--chdir",
-        "/tmp",
-        str(fixture_dir / "checker_arbiter"),
-        "/tmp/input.txt",
-        "/tmp/output.txt",
-        "/tmp/answer.txt",
-    ]
+    env = os.environ | {
+        "CPLIB_INITIALIZERS_ARBITER_REPORT": str(report),
+        "LD_PRELOAD": str(fixture_dir / "libredirect_tmp_eval_score.so"),
+    }
 
-    result = subprocess.run(
-        command, text=True, capture_output=True, timeout=5, check=False
+    result = run(
+        fixture_dir / "checker_arbiter",
+        input_file,
+        output_file,
+        answer_file,
+        cwd=tmp_path,
+        env=env,
     )
 
     assert result.returncode == 0, result.stderr

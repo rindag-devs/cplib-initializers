@@ -88,3 +88,6 @@ add_executable(checker_two_step "${PROJECT_SOURCE_DIR}/include/testlib/checker_t
 target_link_libraries(checker_two_step PRIVATE cplib-initializers::cplib-initializers)
 
 add_executable(fd_launcher fd_launcher.cpp)
+
+add_library(redirect_tmp_eval_score SHARED redirect_tmp_eval_score.cpp)
+target_link_libraries(redirect_tmp_eval_score PRIVATE ${CMAKE_DL_LIBS})

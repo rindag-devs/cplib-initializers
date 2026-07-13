@@ -16,8 +16,9 @@ from conftest import interact_stdio, run, run_with_fds, write
         ("interactor_syzoj", (), "input", 0),
         ("interactor_testlib", ("input.txt",), "input.txt", 0),
     ],
+    ids=["coci", "kattis", "syzoj", "testlib"],
 )
-def test_stdio_interactors_use_real_contestant_channels(
+def test_contestant_channels(
     fixture_dir: pathlib.Path,
     tmp_path: pathlib.Path,
     target: str,
@@ -42,9 +43,7 @@ def test_stdio_interactors_use_real_contestant_channels(
     assert "internal_error" not in result.stderr
 
 
-def test_cms_interactor_uses_real_fifo_endpoints(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_cms_fifo_endpoints(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     write(tmp_path / "input.txt", "7\n")
     from_user = tmp_path / "from-user.fifo"
     to_user = tmp_path / "to-user.fifo"
@@ -85,9 +84,7 @@ def test_cms_interactor_uses_real_fifo_endpoints(
     assert interactor_stdout == "1.000000000\n"
 
 
-def test_spoj_interactor_uses_all_platform_file_descriptors(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_spoj_file_descriptors(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     paths = {
         "input": write(tmp_path / "input.txt", "7\n"),
         "contestant": write(tmp_path / "contestant-output.txt", "7\n"),
@@ -127,9 +124,7 @@ def test_spoj_interactor_uses_all_platform_file_descriptors(
     assert "accepted" in paths["info"].read_text(encoding="utf-8")
 
 
-def test_two_step_runs_real_interactor_then_real_checker(
-    fixture_dir: pathlib.Path, tmp_path: pathlib.Path
-):
+def test_two_step_phase_pair(fixture_dir: pathlib.Path, tmp_path: pathlib.Path):
     input_file = write(tmp_path / "input.txt", "7\n")
     report = tmp_path / "interaction-report.txt"
     phase_one, ready = interact_stdio(
