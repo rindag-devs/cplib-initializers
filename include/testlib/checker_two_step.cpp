@@ -26,6 +26,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <format>
 #include <ios>
 #include <iterator>
 #include <optional>
@@ -94,7 +95,7 @@ inline auto is_valid_base64_str(std::string_view encoded_str) -> bool {
   }
 
   if (!std::all_of(begin(encoded_str), end(encoded_str) - 2,
-                   [](char c) { return is_valid_base64_char(c); })) {
+                   [](char c) -> bool { return is_valid_base64_char(c); })) {
     return false;
   }
 
@@ -177,6 +178,7 @@ struct Output {
     }
 
     auto status = in.read(cplib::var::i32("status"));
+    // Scores are intentionally passed through without a [0, 1] restriction.
     auto score = in.read(cplib::var::f64("score"));
 
     // Check if there's an optional message
@@ -184,7 +186,7 @@ struct Output {
       auto encoded_message_str = in.read(cplib::var::String("encoded_message"));
       auto bytes = base64_decode(encoded_message_str);
       if (!bytes.has_value()) {
-        in.fail(cplib::format("Invalid Base64 encoding for message: {}", encoded_message_str));
+        in.fail(std::format("Invalid Base64 encoding for message: {}", encoded_message_str));
       }
       return {
           .status = status, .score = score, .message = std::string(bytes->begin(), bytes->end())};
@@ -214,7 +216,7 @@ struct Output {
         status = cplib::evaluate::Result::Status::PARTIALLY_CORRECT;
         break;
       default:
-        ev.fail(cplib::format("Unknown interactor report status: {}", pans.status));
+        ev.fail(std::format("Unknown interactor report status: {}", pans.status));
         break;
     }
 

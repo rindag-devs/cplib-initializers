@@ -35,7 +35,7 @@ void spoj_init();
 
 /* spoj "files" are really pipes, this is the recommended way to tell size */
 /* the file's data is unaccessible later, so use it only if it doesn't matter */
-unsigned spoj_file_length(FILE *);
+unsigned spoj_file_length(FILE*);
 
 /* use spoj_assert()! */
 /* usual assert() from assert.h will cause "judge's internal error" in the future! */
@@ -43,7 +43,7 @@ unsigned spoj_file_length(FILE *);
   __spoj_assert_fail(__FILE__ ":" __spoj_xstr(__LINE__) ": SPOJ assertion `" #x "' failed.", x)
 #define __spoj_str(x) #x
 #define __spoj_xstr(x) __spoj_str(x)
-void __spoj_assert_fail(char *, int);
+void __spoj_assert_fail(char*, int);
 
 #endif
 #ifdef __cplusplus

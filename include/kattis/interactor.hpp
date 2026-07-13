@@ -18,8 +18,9 @@
 
 #include <sys/stat.h>
 
+#include <csignal>
 #include <cstdio>
-#include <cstdlib>
+#include <format>
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -54,12 +55,11 @@ struct Reporter : cplib::interactor::Reporter {
   using Status = Report::Status;
 
   explicit Reporter(std::string_view feedback_dir)
-      : judge_message(cplib::format("%s/%s", feedback_dir.data(), FILENAME_JUDGE_MESSAGE.data()),
+      : judge_message(std::format("{}/{}", feedback_dir, FILENAME_JUDGE_MESSAGE),
                       std::ios_base::binary),
-        judge_error(cplib::format("%s/%s", feedback_dir.data(), FILENAME_JUDGE_ERROR.data()),
+        judge_error(std::format("{}/{}", feedback_dir, FILENAME_JUDGE_ERROR),
                     std::ios_base::binary),
-        score(cplib::format("%s/%s", feedback_dir.data(), FILENAME_SCORE.data()),
-              std::ios_base::binary) {}
+        score(std::format("{}/{}", feedback_dir, FILENAME_SCORE), std::ios_base::binary) {}
 
   auto report(const Report& report) -> int override {
     switch (report.status) {
@@ -90,15 +90,15 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "<input_file> <dummy> <feedback_dir> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with kattis interactor initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with kattis interactor initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
@@ -129,6 +129,8 @@ struct Initializer : cplib::interactor::Initializer {
     }
 
     state.reporter = std::make_unique<Reporter>(feedback_dir);
+
+    signal(SIGPIPE, SIG_IGN);
 
     set_inf_path(inf, cplib::trace::Level::NONE);
     set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);

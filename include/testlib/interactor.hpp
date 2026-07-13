@@ -18,8 +18,10 @@
 
 #include <cmath>
 #include <cstdint>
+#include <csignal>
 #include <cstdio>
 #include <cstdlib>
+#include <format>
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -103,7 +105,7 @@ struct Reporter : cplib::interactor::Reporter {
     }
   }
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     stream << std::fixed << std::setprecision(9);
 
     if (appes_mode) {
@@ -180,15 +182,15 @@ constexpr std::string_view ARGS_USAGE =
     "<input_file> [<dummy> <dummy> <report_file> [-appes [...]]]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with testlib interactor initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with testlib interactor initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
@@ -198,8 +200,8 @@ struct Initializer : cplib::interactor::Initializer {
 
   explicit Initializer(bool percent_mode) : percent_mode(percent_mode) {}
 
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::interactor::PlainTextReporter>();
@@ -214,6 +216,8 @@ struct Initializer : cplib::interactor::Initializer {
       cplib::panic("Program must be run with the following arguments:\n  " +
                    std::string(detail::ARGS_USAGE));
     }
+
+    signal(SIGPIPE, SIG_IGN);
 
     set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
     set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);

@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <format>
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -104,7 +105,7 @@ struct Reporter : cplib::checker::Reporter {
     }
   }
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     stream << std::fixed << std::setprecision(9);
 
     if (appes_mode) {
@@ -181,15 +182,15 @@ constexpr std::string_view ARGS_USAGE =
     "<input_file> <output_file> <answer_file> [<report_file> [-appes [...]]]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with testlib checker initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with testlib checker initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
@@ -199,8 +200,8 @@ struct Initializer : cplib::checker::Initializer {
 
   explicit Initializer(bool percent_mode) : percent_mode(percent_mode) {}
 
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::checker::PlainTextReporter>();

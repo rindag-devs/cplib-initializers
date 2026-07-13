@@ -17,7 +17,7 @@
 #define CPLIB_INITIALIZERS_CMS_INTERACTOR_HPP_
 
 #include <csignal>
-#include <cstdlib>
+#include <format>
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -37,7 +37,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     std::ostream score_stream(std::cout.rdbuf());
     std::ostream status_stream(std::cerr.rdbuf());
 
@@ -69,22 +69,22 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "<from_user_file> <to_user_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with cms interactor initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with cms interactor initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
 
 struct Initializer : cplib::interactor::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
@@ -99,8 +99,8 @@ struct Initializer : cplib::interactor::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto &from_user_file = parsed_args.ordered[0];
-    const auto &to_user_file = parsed_args.ordered[1];
+    const auto& from_user_file = parsed_args.ordered[0];
+    const auto& to_user_file = parsed_args.ordered[1];
 
     // When the sandbox opens the other endpoints of these fifos to redirect
     // them to to stdin/out it does so first for stdin and then for stdout.

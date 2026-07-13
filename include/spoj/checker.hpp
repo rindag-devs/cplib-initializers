@@ -17,7 +17,7 @@
 #define CPLIB_INITIALIZERS_SPOJ_CHECKER_HPP_
 
 #include <cmath>
-#include <cstdlib>
+#include <format>
 #include <iostream>
 #include <memory>
 #include <ostream>
@@ -28,7 +28,6 @@
 
 #include "cplib.hpp"
 #include "spoj.h"
-#include "spoj/spoj_interactive.h"
 
 namespace cplib_initializers::spoj::checker {
 
@@ -88,15 +87,15 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "[...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with spoj checker initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with spoj checker initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail

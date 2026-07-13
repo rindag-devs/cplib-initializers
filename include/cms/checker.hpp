@@ -16,7 +16,7 @@
 #ifndef CPLIB_INITIALIZERS_CMS_CHECKER_HPP_
 #define CPLIB_INITIALIZERS_CMS_CHECKER_HPP_
 
-#include <cstdlib>
+#include <format>
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -34,7 +34,7 @@ struct Reporter : cplib::checker::Reporter {
   using Report = cplib::checker::Report;
   using Status = Report::Status;
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     std::ostream score_stream(std::cout.rdbuf());
     std::ostream status_stream(std::clog.rdbuf());
 
@@ -66,22 +66,22 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with cms checker initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with cms checker initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
 
 struct Initializer : cplib::checker::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
@@ -96,9 +96,9 @@ struct Initializer : cplib::checker::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
-    const auto &inf = parsed_args.ordered[0];
-    const auto &ouf = parsed_args.ordered[2];
-    const auto &ans = parsed_args.ordered[1];
+    const auto& inf = parsed_args.ordered[0];
+    const auto& ouf = parsed_args.ordered[2];
+    const auto& ans = parsed_args.ordered[1];
 
     set_inf_path(inf, cplib::trace::Level::NONE);
     set_ouf_path(ouf, cplib::trace::Level::NONE);

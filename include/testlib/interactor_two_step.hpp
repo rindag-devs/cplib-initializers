@@ -19,9 +19,11 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <csignal>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <format>
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -54,7 +56,7 @@ inline auto encode_triplet(std::uint8_t a, std::uint8_t b, std::uint8_t c) -> st
   return {b64_char1, b64_char2, b64_char3, b64_char4};
 }
 
-inline auto base64_encode(const std::vector<std::uint8_t> &input) -> std::string {
+inline auto base64_encode(const std::vector<std::uint8_t>& input) -> std::string {
   const auto size = input.size();
   const auto full_triples = size / 3;
 
@@ -64,7 +66,7 @@ inline auto base64_encode(const std::vector<std::uint8_t> &input) -> std::string
   for (std::size_t i = 0; i < full_triples; ++i) {
     const auto triplet =
         std::vector<std::uint8_t>(input.begin() + static_cast<std::ptrdiff_t>(i) * 3,
-                                  input.begin() + static_cast<std::ptrdiff_t>(i) * 3 + 4);
+                                  input.begin() + static_cast<std::ptrdiff_t>(i) * 3 + 3);
     const auto base64_chars = encode_triplet(triplet[0], triplet[1], triplet[2]);
     std::ranges::copy(base64_chars, back_inserter(output));
   }
@@ -106,12 +108,19 @@ struct Reporter : cplib::interactor::Reporter {
   explicit Reporter(std::string_view output_file)
       : stream(std::string(output_file), std::ios_base::binary) {}
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     auto bytes = std::vector<std::uint8_t>(report.message.begin(), report.message.end());
     stream << std::fixed << std::setprecision(9);
     stream << static_cast<int>(report.status) << '\n'
            << report.score << '\n'
            << detail::base64_encode(bytes) << '\n';
+
+    stream.flush();
+    if (!stream) {
+      std::cerr << "Failed to write two-step interactor report.\n";
+      return static_cast<int>(ExitCode::INTERNAL_ERROR);
+    }
+
     return 0;
   }
 };
@@ -120,22 +129,22 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "<input_file> <report_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with testlib two-step interactor initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with testlib two-step interactor initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
 
 struct Initializer : cplib::interactor::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     // Use PlainTextReporter to handle errors during the init process
     state.reporter = std::make_unique<cplib::interactor::PlainTextReporter>();
@@ -151,11 +160,13 @@ struct Initializer : cplib::interactor::Initializer {
                    std::string(detail::ARGS_USAGE));
     }
 
+    signal(SIGPIPE, SIG_IGN);
+
     set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
     set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);
     set_to_user_fileno(fileno(stdout));
 
-    const auto &report_file = parsed_args.ordered[1];
+    const auto& report_file = parsed_args.ordered[1];
 
     state.reporter = std::make_unique<Reporter>(report_file);
   }

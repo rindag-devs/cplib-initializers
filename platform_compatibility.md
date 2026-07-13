@@ -18,12 +18,11 @@
 | [QDUOJ](https://qduoj.com/)                                                 | [qduoj][qduoj-checker]             | N/A                                                 | N/A                          |                                                                                     |
 | [SPOJ](https://www.spoj.com/)                                               | [spoj][spoj-checker]               | [spoj][spoj-interactor]                             | N/A                          |                                                                                     |
 | [SYZOJ 2](https://github.com/syzoj/syzoj)[^3]                               | [syzoj][syzoj-checker]             | [syzoj][syzoj-interactor]                           | N/A                          |                                                                                     |
-| [Universal OJ](https://uoj.ac)[^4]                                          | [testlib][testlib-checker]         | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false                                                                  |
+| [Universal OJ](https://uoj.ac)]                                             | [testlib][testlib-checker]         | [testlib][testlib-interactor]                       | [testlib][testlib-validator] | percent_mode=false                                                                  |
 
 [^1]: You need to use [testlib-interactor-two-step] and [testlib-checker-two-step] together. Read [Testlib Two-Step Interaction Help](include/testlib/two_step_interaction_help.md) for details.
 [^2]: Hydro supports several types of checkers, but the SYZOJ Checker Initializer displays more information.
 [^3]: SYZOJ 2 and Lyrio are two different platforms, and LibreOJ is no longer developed based on SYZOJ 2.
-[^4]: UOJ Community Edition needs to edit the source code or upgrade the compiler to get C++ 17 or higher support.
 
 [arbiter-checker]: include/arbiter/checker.hpp
 [ccr-checker]: include/ccr/checker.hpp
@@ -52,4 +51,4 @@
 
 | Platform | Reason                                                                                                           |
 | -------- | ---------------------------------------------------------------------------------------------------------------- |
-| Luogu    | Luogu checker and interactor are forced to compile with C++ 14, which is lower than the C++ 17 required by CPLib |
+| Luogu    | Luogu checker and interactor are forced to compile with C++ 14, which is lower than the C++ 20 required by CPLib |

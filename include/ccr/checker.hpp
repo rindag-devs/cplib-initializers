@@ -17,8 +17,7 @@
 #define CPLIB_INITIALIZERS_CCR_CHECKER_HPP_
 
 #include <cctype>
-#include <cmath>
-#include <cstdlib>
+#include <format>
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -73,15 +72,15 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "<input_file> <answer_file> <output_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with ccr checker initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with ccr checker initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail

@@ -17,9 +17,9 @@
 #define CPLIB_INITIALIZERS_COCI_INTERACTOR_HPP_
 
 #include <cmath>
+#include <csignal>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib>
+#include <format>
 #include <iostream>
 #include <memory>
 #include <ostream>
@@ -42,7 +42,7 @@ struct Reporter : cplib::interactor::Reporter {
   using Report = cplib::interactor::Report;
   using Status = Report::Status;
 
-  auto report(const Report &report) -> int override {
+  auto report(const Report& report) -> int override {
     std::ostream score(std::clog.rdbuf());
 
     if (report.status == Status::PARTIALLY_CORRECT) {
@@ -69,22 +69,22 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "<input_file> [...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with coci interactor initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with coci interactor initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
 
 struct Initializer : cplib::interactor::Initializer {
-  auto init(std::string_view arg0, const std::vector<std::string> &args) -> void override {
-    auto &state = this->state();
+  auto init(std::string_view arg0, const std::vector<std::string>& args) -> void override {
+    auto& state = this->state();
 
     state.reporter = std::make_unique<Reporter>();
 
@@ -98,6 +98,8 @@ struct Initializer : cplib::interactor::Initializer {
       cplib::panic("Program must be run with the following arguments:\n  " +
                    std::string(detail::ARGS_USAGE));
     }
+
+    signal(SIGPIPE, SIG_IGN);
 
     set_inf_path(parsed_args.ordered[0], cplib::trace::Level::NONE);
     set_from_user_fileno(fileno(stdin), cplib::trace::Level::NONE);

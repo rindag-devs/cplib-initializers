@@ -16,8 +16,8 @@
 #ifndef CPLIB_INITIALIZERS_SYZOJ_INTERACTOR_HPP_
 #define CPLIB_INITIALIZERS_SYZOJ_INTERACTOR_HPP_
 
-#include <cstdio>
-#include <cstdlib>
+#include <csignal>
+#include <format>
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -61,6 +61,12 @@ struct Reporter : cplib::interactor::Reporter {
       }
     }
 
+    score.flush();
+    if (!score) {
+      message << "Failed to write " << FILENAME_SCORE << ".\n";
+      return 1;
+    }
+
     return 0;
   }
 };
@@ -69,15 +75,15 @@ namespace detail {
 constexpr std::string_view ARGS_USAGE = "[...]";
 
 inline auto print_help_message(std::string_view program_name) -> void {
-  std::string msg = cplib::format(CPLIB_STARTUP_TEXT
-                                  "\n"
-                                  "Initialized with syzoj interactor initializer\n"
-                                  "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
-                                  "Devs, copyright(c) 2024-present\n"
-                                  "\n"
-                                  "Usage:\n"
-                                  "  %s %s\n",
-                                  program_name.data(), ARGS_USAGE.data());
+  std::string msg = std::format(CPLIB_STARTUP_TEXT
+                                "\n"
+                                "Initialized with syzoj interactor initializer\n"
+                                "https://github.com/rindag-devs/cplib-initializers/ by Rindag "
+                                "Devs, copyright(c) 2024-present\n"
+                                "\n"
+                                "Usage:\n"
+                                "  {} {}\n",
+                                program_name, ARGS_USAGE);
   cplib::panic(msg);
 }
 }  // namespace detail
@@ -93,6 +99,8 @@ struct Initializer : cplib::interactor::Initializer {
     if (parsed_args.has_flag("help")) {
       detail::print_help_message(arg0);
     }
+
+    signal(SIGPIPE, SIG_IGN);
 
     set_inf_path(FILENAME_INF, cplib::trace::Level::STACK_ONLY);
     set_from_user_fileno(fileno(stdin), cplib::trace::Level::STACK_ONLY);
